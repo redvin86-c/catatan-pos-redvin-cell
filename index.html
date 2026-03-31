@@ -301,9 +301,11 @@ body{background:var(--bg);color:var(--text);font-family:'Space Grotesk',sans-ser
 .kat-chip-del{background:none;border:none;color:var(--text3);cursor:pointer;font-size:11px;line-height:1;padding:0;}
 .kat-chip-del:hover{color:var(--red);}
 
-/* SERVICE FORM dalam cart */
-.service-panel{background:var(--bg3);border:1px solid rgba(239,68,68,.3);border-radius:var(--r);padding:10px 12px;margin:0 7px 10px;display:none;}
+/* SERVICE FORM dalam cart — posisi di luar cart-scroll-wrap, setelah scroll area */
+.service-panel{background:var(--bg3);border:1px solid rgba(239,68,68,.3);border-top:2px solid rgba(239,68,68,.4);border-radius:0 0 var(--r) var(--r);padding:10px 12px;margin:0;display:none;max-height:220px;overflow-y:auto;flex-shrink:0;}
 .service-panel.show{display:block;}
+.service-panel::-webkit-scrollbar{width:3px;}
+.service-panel::-webkit-scrollbar-thumb{background:rgba(239,68,68,.3);}
 .service-panel-title{font-size:10px;font-weight:700;color:#fca5a5;text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px;display:flex;align-items:center;gap:5px;}
 .service-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px;}
 .service-fg{display:flex;flex-direction:column;gap:3px;}
@@ -450,7 +452,8 @@ body{background:var(--bg);color:var(--text);font-family:'Space Grotesk',sans-ser
     <div class="cart-items" id="cart-items">
       <div class="cart-empty"><div class="cart-empty-ico">🛒</div><div>Pilih produk dari katalog</div></div>
     </div>
-    <!-- SERVICE PANEL: muncul otomatis jika ada item kategori Service -->
+    </div><!-- end cart-scroll-wrap -->
+    <!-- SERVICE PANEL: di luar cart-scroll-wrap agar tidak ter-overwrite oleh renderCart() -->
     <div class="service-panel" id="service-panel">
       <div class="service-panel-title">🔧 Info Servis Pelanggan</div>
       <div class="service-grid">
@@ -495,7 +498,6 @@ body{background:var(--bg);color:var(--text);font-family:'Space Grotesk',sans-ser
         </div>
       </div>
     </div>
-    </div><!-- end cart-scroll-wrap -->
     <div class="note-row">
       <input type="text" id="catatan-input" placeholder="✏️ Catatan (opsional)">
     </div>
@@ -970,7 +972,9 @@ function clearCart(){if(!cart.length) return;cart=[];document.getElementById('ca
 const FEE_SUGGEST=[1000,2000,3000,4000,5000,7500,10000];
 
 function renderCart(){
-  const el=document.getElementById('cart-scroll-wrap')||document.getElementById('cart-items');
+  // Always target cart-items only — never cart-scroll-wrap (service-panel lives outside it now)
+  const el=document.getElementById('cart-items');
+  if(!el) return;
   document.getElementById('cart-count').textContent=cart.reduce((s,c)=>s+c.qty,0);
   if(!cart.length){
     el.innerHTML='<div class="cart-empty"><div class="cart-empty-ico">🛒</div><div>Pilih produk dari katalog</div></div>';
@@ -1393,7 +1397,7 @@ function checkServicePanel(){
   const hasService=cart.some(i=>i.kategori==='Service');
   const panel=document.getElementById('service-panel');
   if(panel) panel.classList.toggle('show',hasService);
-  // Ensure service panel is visible by scrolling cart-items to bottom when shown
+  // Service panel is now outside cart-scroll-wrap; scroll cart to bottom when service items added
   if(hasService){
     const ci=document.getElementById('cart-scroll-wrap');
     if(ci) setTimeout(()=>ci.scrollTop=ci.scrollHeight,50);
