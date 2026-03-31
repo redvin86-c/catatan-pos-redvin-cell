@@ -90,6 +90,18 @@ body{background:var(--bg);color:var(--text);font-family:'Space Grotesk',sans-ser
 .fee-suggest{display:flex;gap:3px;flex-wrap:wrap;margin-top:4px;}
 .fee-sug-btn{padding:2px 7px;background:var(--bg4);border:1px solid var(--border2);border-radius:20px;font-size:10px;color:var(--text3);cursor:pointer;font-family:'JetBrains Mono',monospace;transition:all .1s;}
 .fee-sug-btn:hover{background:rgba(245,158,11,.15);border-color:var(--amber);color:var(--amber);}
+/* TARIK TUNAI ADMIN BLOCK */
+.tt-admin-block{margin-top:7px;padding:7px 9px;background:rgba(236,72,153,.07);border:1px solid rgba(236,72,153,.2);border-radius:7px;}
+.tt-admin-label{font-size:9px;color:#f9a8d4;font-weight:700;text-transform:uppercase;letter-spacing:.4px;margin-bottom:5px;}
+.tt-admin-opts{display:flex;gap:6px;margin-bottom:6px;}
+.tt-radio-opt{display:flex;align-items:center;gap:5px;padding:4px 10px;border-radius:20px;font-size:10px;font-weight:600;cursor:pointer;border:1px solid rgba(236,72,153,.25);color:var(--text2);transition:all .15s;user-select:none;}
+.tt-radio-opt input[type=radio]{width:12px;height:12px;accent-color:#ec4899;cursor:pointer;}
+.tt-radio-opt:has(input:checked){background:rgba(236,72,153,.18);border-color:#ec4899;color:#f9a8d4;}
+.tt-admin-input-row{display:flex;align-items:center;gap:6px;margin-bottom:4px;}
+.tt-admin-input-label{font-size:10px;color:var(--text3);white-space:nowrap;}
+.tt-admin-input{flex:1;background:var(--bg4);border:1px solid rgba(236,72,153,.3);border-radius:5px;padding:4px 7px;font-size:11px;color:#f9a8d4;font-family:'JetBrains Mono',monospace;outline:none;}
+.tt-admin-input:focus{border-color:#ec4899;}
+.tt-admin-hint{font-size:9px;color:var(--text3);line-height:1.4;}
 /* NOMINAL TARIK — TarikTunai */
 .ci-nominal-row{display:flex;align-items:center;gap:6px;margin-top:5px;padding:5px 8px;background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.2);border-radius:6px;}
 .ci-nominal-label{font-size:10px;color:#fca5a5;font-weight:600;white-space:nowrap;}
@@ -137,9 +149,15 @@ body{background:var(--bg);color:var(--text);font-family:'Space Grotesk',sans-ser
 .btn-proses:active{transform:scale(.98);}
 .btn-proses:disabled{opacity:.4;cursor:not-allowed;transform:none;}
 /* REKAP */
-.rekap-view{flex:1;overflow-y:auto;flex-direction:column;gap:16px;padding:16px;}
-.rekap-view::-webkit-scrollbar{width:4px;}
-.rekap-view::-webkit-scrollbar-thumb{background:var(--border2);}
+.rekap-view{flex:1;display:flex;flex-direction:column;gap:0;padding:0;overflow:hidden;}
+.rekap-view-top{flex-shrink:0;display:flex;flex-direction:column;gap:10px;padding:12px 12px 0;overflow-y:auto;max-height:44%;}
+.rekap-view-top::-webkit-scrollbar{width:3px;}
+.rekap-view-top::-webkit-scrollbar-thumb{background:var(--border2);}
+.rekap-view-table-wrap{flex:1;display:flex;flex-direction:column;padding:10px 12px 12px;min-height:0;overflow:hidden;}
+.rekap-view-table-wrap .rsec{flex:1;display:flex;flex-direction:column;overflow:hidden;}
+.rekap-table-scroll{flex:1;overflow-y:auto;}
+.rekap-table-scroll::-webkit-scrollbar{width:4px;}
+.rekap-table-scroll::-webkit-scrollbar-thumb{background:var(--border2);}
 .rsec{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r2);overflow:hidden;}
 .rsec-head{padding:12px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
 .rsec-title{font-size:13px;font-weight:700;}
@@ -441,8 +459,12 @@ body{background:var(--bg);color:var(--text);font-family:'Space Grotesk',sans-ser
           <input type="text" id="srv-nama" placeholder="cth: Budi Santoso">
         </div>
         <div class="service-fg">
-          <label>Nomor HP</label>
+          <label>Nomor HP Pelanggan</label>
           <input type="tel" id="srv-hp" placeholder="cth: 08123456789">
+        </div>
+        <div class="service-fg full">
+          <label>Tipe / Merek HP</label>
+          <input type="text" id="srv-tipe" placeholder="cth: Samsung A35, iPhone 13, Redmi Note 12...">
         </div>
         <div class="service-fg full">
           <label>Jenis Kerusakan</label>
@@ -566,20 +588,23 @@ body{background:var(--bg);color:var(--text);font-family:'Space Grotesk',sans-ser
 
 <!-- REKAP -->
 <div class="view rekap-view" id="view-rekap">
-  <div class="rsec">
-    <div class="rsec-head"><span class="rsec-title">📈 Ringkasan Hari Ini</span></div>
-    <div class="stat-cards" id="rekap-stats"></div>
-  </div>
-  <div class="rsec">
-    <div class="rsec-head"><span class="rsec-title">🏷️ Laba per Kategori</span></div>
-    <div class="rekap-by-kat" id="rekap-by-kat"></div>
-  </div>
-  <div class="rsec">
-    <div class="rsec-head">
-      <span class="rsec-title">🧾 Semua Transaksi</span>
-      <span id="rekap-trx-count" style="font-size:11px;color:var(--text3)">0 transaksi</span>
+  <div class="rekap-view-top">
+    <div class="rsec">
+      <div class="rsec-head"><span class="rsec-title">📈 Ringkasan Hari Ini</span></div>
+      <div class="stat-cards" id="rekap-stats"></div>
     </div>
-    <div style="padding:9px 14px;border-bottom:1px solid var(--border);display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+    <div class="rsec">
+      <div class="rsec-head"><span class="rsec-title">🏷️ Laba per Kategori</span></div>
+      <div class="rekap-by-kat" id="rekap-by-kat"></div>
+    </div>
+  </div>
+  <div class="rekap-view-table-wrap">
+    <div class="rsec">
+      <div class="rsec-head">
+        <span class="rsec-title">🧾 Semua Transaksi</span>
+        <span id="rekap-trx-count" style="font-size:11px;color:var(--text3)">0 transaksi</span>
+      </div>
+<div style="padding:9px 14px;border-bottom:1px solid var(--border);display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
       <div style="position:relative;flex:1;min-width:160px;max-width:300px;">
         <span style="position:absolute;left:9px;top:50%;transform:translateY(-50%);color:var(--text3);font-size:12px;pointer-events:none;">🔍</span>
         <input type="text" id="rekap-search" placeholder="Cari ID, produk, metode..."
@@ -602,38 +627,67 @@ body{background:var(--bg);color:var(--text);font-family:'Space Grotesk',sans-ser
         style="padding:7px 11px;background:var(--bg3);border:1px solid var(--border2);border-radius:var(--r);color:var(--text2);font-size:11px;cursor:pointer;font-family:'Space Grotesk',sans-serif;transition:all .15s;"
         onmouseover="this.style.borderColor='var(--red)';this.style.color='var(--red)'" onmouseout="this.style.borderColor='var(--border2)';this.style.color='var(--text2)'">✕ Reset</button>
     </div>
-    <table class="rekap-table">
+    </div><!-- end rsec inner -->
+      <div class="rekap-table-scroll">
+      <table class="rekap-table">
       <thead><tr><th>ID</th><th>Waktu</th><th>Items</th><th>Total</th><th>Laba</th><th>Metode</th><th>Aksi</th></tr></thead>
       <tbody id="rekap-tbody"></tbody>
     </table>
+      </div><!-- end rekap-table-scroll -->
+    </div>
   </div>
 </div>
 
 <!-- REKAP BULANAN -->
 <div class="view rekap-view" id="view-rekapbulanan">
-  <div class="rsec">
-    <div class="rsec-head">
-      <span class="rsec-title">📅 Rekap Bulanan</span>
-      <div class="bulan-filter">
-        <select class="bulan-select" id="bulan-select" onchange="renderRekapBulanan()"></select>
-        <select class="bulan-select" id="tahun-select" onchange="renderRekapBulanan()"></select>
+  <div class="rekap-view-top">
+    <div class="rsec">
+      <div class="rsec-head">
+        <span class="rsec-title">📅 Rekap Bulanan</span>
+        <div class="bulan-filter">
+          <select class="bulan-select" id="bulan-select" onchange="renderRekapBulanan()"></select>
+          <select class="bulan-select" id="tahun-select" onchange="renderRekapBulanan()"></select>
+        </div>
+      </div>
+      <div class="rekap-bulanan-grid" id="rekap-bulanan-stats"></div>
+    </div>
+    <div class="rsec">
+      <div class="rsec-head"><span class="rsec-title">🏷️ Laba per Kategori Bulan Ini</span></div>
+      <div class="rekap-by-kat" id="rekap-bulanan-kat"></div>
+    </div>
+  </div>
+  <div class="rekap-view-table-wrap">
+    <div class="rsec">
+      <div class="rsec-head">
+        <span class="rsec-title">🧾 Transaksi Bulan Ini</span>
+        <span id="rekap-bulanan-count" style="font-size:11px;color:var(--text3)">0 transaksi</span>
+      </div>
+      <!-- SEARCH BAR REKAP BULANAN -->
+      <div style="padding:9px 14px;border-bottom:1px solid var(--border);display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+        <div style="position:relative;flex:1;min-width:160px;max-width:300px;">
+          <span style="position:absolute;left:9px;top:50%;transform:translateY(-50%);color:var(--text3);font-size:12px;pointer-events:none;">🔍</span>
+          <input type="text" id="rekap-bulanan-search" placeholder="Cari ID, produk, metode..."
+            oninput="renderRekapBulanan()"
+            style="width:100%;background:var(--bg3);border:1px solid var(--border2);border-radius:var(--r);padding:7px 10px 7px 30px;color:var(--text);font-family:'Space Grotesk',sans-serif;font-size:12px;outline:none;"
+            onfocus="this.style.borderColor='var(--accent)'" onblur="this.style.borderColor='var(--border2)'">
+        </div>
+        <select id="rekap-bulanan-filter-method" onchange="renderRekapBulanan()" style="background:var(--bg3);border:1px solid var(--border2);border-radius:var(--r);padding:7px 10px;color:var(--text);font-family:'Space Grotesk',sans-serif;font-size:12px;outline:none;">
+          <option value="">Semua Metode</option>
+          <option value="Tunai">💵 Tunai</option>
+          <option value="Transfer">🏦 Transfer</option>
+          <option value="QRIS">📲 QRIS</option>
+        </select>
+        <button onclick="document.getElementById('rekap-bulanan-search').value='';document.getElementById('rekap-bulanan-filter-method').value='';renderRekapBulanan();"
+          style="padding:7px 11px;background:var(--bg3);border:1px solid var(--border2);border-radius:var(--r);color:var(--text2);font-size:11px;cursor:pointer;font-family:'Space Grotesk',sans-serif;transition:all .15s;"
+          onmouseover="this.style.borderColor='var(--red)';this.style.color='var(--red)'" onmouseout="this.style.borderColor='var(--border2)';this.style.color='var(--text2)'">✕ Reset</button>
+      </div>
+      <div class="rekap-table-scroll">
+      <table class="rekap-table">
+        <thead><tr><th>ID</th><th>Tanggal</th><th>Waktu</th><th>Items</th><th>Total</th><th>Laba</th><th>Metode</th></tr></thead>
+        <tbody id="rekap-bulanan-tbody"></tbody>
+      </table>
       </div>
     </div>
-    <div class="rekap-bulanan-grid" id="rekap-bulanan-stats"></div>
-  </div>
-  <div class="rsec">
-    <div class="rsec-head"><span class="rsec-title">🏷️ Laba per Kategori Bulan Ini</span></div>
-    <div class="rekap-by-kat" id="rekap-bulanan-kat"></div>
-  </div>
-  <div class="rsec">
-    <div class="rsec-head">
-      <span class="rsec-title">🧾 Transaksi Bulan Ini</span>
-      <span id="rekap-bulanan-count" style="font-size:11px;color:var(--text3)">0 transaksi</span>
-    </div>
-    <table class="rekap-table">
-      <thead><tr><th>ID</th><th>Tanggal</th><th>Waktu</th><th>Items</th><th>Total</th><th>Laba</th><th>Metode</th></tr></thead>
-      <tbody id="rekap-bulanan-tbody"></tbody>
-    </table>
   </div>
 </div>
 
@@ -859,6 +913,41 @@ function updateFee(kode,val){
 }
 function updateNominal(kode,val){
   const item=cart.find(c=>c.kode===kode); if(item) item.nominalTarik=parseInt(val)||0;
+  renderCart(); // re-render to update hint text
+}
+function updateTTAdminMode(kode,mode){
+  const item=cart.find(c=>c.kode===kode); if(!item) return;
+  item.adminMode=mode;
+  // Update labels and fee based on mode
+  if(mode==='diluar'){
+    // diluar: fee is added to cart total as separate item fee
+    item.fee=item.adminFee||0;
+  } else {
+    // potong: fee comes from nominal, no extra charge to customer
+    item.fee=0;
+  }
+  renderCart();
+}
+function updateTTAdminFee(kode,val){
+  const item=cart.find(c=>c.kode===kode); if(!item) return;
+  item.adminFee=parseInt(val)||0;
+  if(item.adminMode==='diluar'){
+    item.fee=item.adminFee; // charge customer
+  } else {
+    item.fee=0; // not charged separately
+  }
+  // Update hint inline without full re-render
+  const block=document.querySelector(`.tt-admin-input[data-kode="${kode}"]`)?.closest('.tt-admin-block');
+  if(block){
+    const hint=block.querySelector('.tt-admin-hint');
+    if(hint){
+      if(item.adminMode==='diluar'){
+        hint.textContent=`ℹ️ Fee Rp ${(item.adminFee||0).toLocaleString('id-ID')} dibayar terpisah (masuk ke pendapatan)`;
+      } else {
+        hint.textContent=`ℹ️ Fee dipotong dari nominal: pelanggan terima Rp ${((item.nominalTarik||0)-(item.adminFee||0)).toLocaleString('id-ID')}`;
+      }
+    }
+  }
   updateSummary();
 }
 function setFeeQ(kode,val){
@@ -900,7 +989,32 @@ function renderCart(){
           oninput="updateNominal('${item.kode}',this.value)"
           step="50000">
       </div>
-      <div class="nominal-hint">⚠️ Laci akan berkurang sebesar nominal ini</div>`:'';
+      <div class="nominal-hint">⚠️ Laci berkurang sebesar nominal ini</div>
+      <div class="tt-admin-block">
+        <div class="tt-admin-label">💳 Admin Fee:</div>
+        <div class="tt-admin-opts">
+          <label class="tt-radio-opt ${(item.adminMode||'potong')==='potong'?'active':''}">
+            <input type="radio" name="tt-admin-mode-${item.kode}" value="potong"
+              ${(item.adminMode||'potong')==='potong'?'checked':''}
+              onchange="updateTTAdminMode('${item.kode}','potong')">
+            Potong Nominal
+          </label>
+          <label class="tt-radio-opt ${item.adminMode==='diluar'?'active':''}">
+            <input type="radio" name="tt-admin-mode-${item.kode}" value="diluar"
+              ${item.adminMode==='diluar'?'checked':''}
+              onchange="updateTTAdminMode('${item.kode}','diluar')">
+            Diluar Nominal
+          </label>
+        </div>
+        <div class="tt-admin-input-row">
+          <span class="tt-admin-input-label">Rp Admin:</span>
+          <input class="tt-admin-input" type="number" placeholder="0" step="500"
+            data-kode="${item.kode}"
+            value="${item.adminFee||''}"
+            oninput="updateTTAdminFee('${item.kode}',this.value)">
+        </div>
+        ${item.adminMode==='diluar'?`<div class="tt-admin-hint">ℹ️ Fee Rp ${(item.adminFee||0).toLocaleString('id-ID')} dibayar terpisah (masuk ke pendapatan)</div>`:`<div class="tt-admin-hint">ℹ️ Fee dipotong dari nominal: pelanggan terima Rp ${((item.nominalTarik||0)-(item.adminFee||0)).toLocaleString('id-ID')}</div>`}
+      </div>`:'';
     return `<div class="cart-item">
       <div class="ci-info">
         <div class="ci-name">${item.nama}</div>
@@ -999,6 +1113,7 @@ function showStruk(trx){
       <div style="font-weight:700;color:#fca5a5;margin-bottom:4px">🔧 Info Servis</div>
       ${trx.service.nama?`<div style="color:var(--text2)">Pelanggan: <strong style="color:var(--text)">${trx.service.nama}</strong></div>`:''}
       ${trx.service.hp?`<div style="color:var(--text2)">No. HP: <strong style="color:var(--text)">${trx.service.hp}</strong></div>`:''}
+      ${trx.service.tipe?`<div style="color:var(--text2)">Tipe HP: <strong style="color:var(--text)">${trx.service.tipe}</strong></div>`:''}
       ${trx.service.kerusakan?`<div style="color:var(--text2)">Kerusakan: <strong style="color:var(--text)">${trx.service.kerusakan}</strong></div>`:''}
     </div>`:'';
   openModal(`
@@ -1022,7 +1137,10 @@ function showStruk(trx){
       <div class="struk-total-row" style="color:var(--text2)"><span>Metode</span><span>${trx.method}</span></div>
       ${showKembalian?`<div class="struk-total-row" style="color:var(--text2)"><span>Diterima</span><span>${fmt(trx.bayar)}</span></div><div class="struk-total-row kembalian"><span>Kembalian</span><span class="val">${fmt(trx.kembalian)}</span></div>`:''}
     </div>
-    ${trx.totalNominalTarik>0?`<div style="margin-top:7px;padding:6px 9px;background:rgba(239,68,68,.1);border:1px dashed rgba(239,68,68,.3);border-radius:6px;font-size:11px;display:flex;justify-content:space-between;"><span style="color:#fca5a5">💸 Total Nominal Tarik</span><span style="font-family:'JetBrains Mono',monospace;font-weight:700;color:#fca5a5">${fmt(trx.totalNominalTarik)}</span></div>`:''}
+    ${trx.totalNominalTarik>0?`<div style="margin-top:7px;padding:7px 9px;background:rgba(239,68,68,.08);border:1px dashed rgba(239,68,68,.3);border-radius:7px;font-size:11px;">
+      <div style="display:flex;justify-content:space-between;margin-bottom:3px"><span style="color:#fca5a5">💸 Total Nominal Tarik</span><span style="font-family:'JetBrains Mono',monospace;font-weight:700;color:#fca5a5">${fmt(trx.totalNominalTarik)}</span></div>
+      ${trx.ttAdminSummary?`<div style="color:var(--text3)">${trx.ttAdminSummary}</div>`:''}
+    </div>`:''}
     ${trx.catatan?`<div style="margin-top:9px;font-size:11px;color:var(--text3);padding:7px 9px;background:var(--bg3);border-radius:6px">📝 ${trx.catatan}</div>`:''}
     <div class="struk-footer">Terima kasih telah berbelanja! 🙏</div>
     <div class="struk-actions">
@@ -1290,7 +1408,7 @@ function toggleKerusakan(el,val){
 }
 
 function clearServicePanel(){
-  const ids=['srv-nama','srv-hp','srv-kerusakan','srv-override-harga','srv-override-modal'];
+  const ids=['srv-nama','srv-hp','srv-tipe','srv-kerusakan','srv-override-harga','srv-override-modal'];
   ids.forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
   document.querySelectorAll('.kerusakan-chip').forEach(c=>c.classList.remove('active'));
 }
@@ -1311,9 +1429,10 @@ function applySrvPriceOverride(){
 function getServiceData(){
   const nama=(document.getElementById('srv-nama')?.value||'').trim();
   const hp=(document.getElementById('srv-hp')?.value||'').trim();
+  const tipe=(document.getElementById('srv-tipe')?.value||'').trim();
   const kerusakan=(document.getElementById('srv-kerusakan')?.value||'').trim();
-  if(!nama&&!hp&&!kerusakan) return null;
-  return{nama,hp,kerusakan};
+  if(!nama&&!hp&&!kerusakan&&!tipe) return null;
+  return{nama,hp,tipe,kerusakan};
 }
 
 // =============================================
@@ -1489,9 +1608,20 @@ function renderRekapBulanan(){
       </div>`).join('')
     :'<div style="padding:14px;color:var(--text3);font-size:12px">Belum ada data bulan ini</div>';
   // Table
-  document.getElementById('rekap-bulanan-count').textContent=trxBulan.length+' transaksi';
-  document.getElementById('rekap-bulanan-tbody').innerHTML=trxBulan.length
-    ?trxBulan.map(t=>`<tr>
+  // Apply search+filter on top of bulan filter
+  const bulQ=(document.getElementById('rekap-bulanan-search')?.value||'').toLowerCase();
+  const bulMethod=document.getElementById('rekap-bulanan-filter-method')?.value||'';
+  let filteredBul=trxBulan.filter(t=>{
+    if(bulMethod&&t.method!==bulMethod) return false;
+    if(bulQ){
+      const hay=(t.id+' '+t.items.map(i=>i.nama).join(' ')+' '+t.method+' '+t.tanggal).toLowerCase();
+      if(!hay.includes(bulQ)) return false;
+    }
+    return true;
+  });
+  document.getElementById('rekap-bulanan-count').textContent=filteredBul.length+' / '+trxBulan.length+' transaksi';
+  document.getElementById('rekap-bulanan-tbody').innerHTML=filteredBul.length
+    ?filteredBul.map(t=>`<tr>
         <td><span class="trx-id">${t.id}</span></td>
         <td style="font-family:'JetBrains Mono',monospace;font-size:11px">${t.tanggal}</td>
         <td style="font-family:'JetBrains Mono',monospace;font-size:11px">${t.waktu}</td>
@@ -1500,7 +1630,7 @@ function renderRekapBulanan(){
         <td><span class="trx-laba">+${fmt(t.laba)}</span></td>
         <td><span class="method-badge m-${t.method}">${t.method}</span></td>
       </tr>`).join('')
-    :'<tr><td colspan="7" style="text-align:center;padding:22px;color:var(--text3)">Belum ada transaksi bulan ini</td></tr>';
+    :'<tr><td colspan="7" style="text-align:center;padding:22px;color:var(--text3)">'+(bulQ||bulMethod?'🔍 Tidak ada hasil pencarian':'Belum ada transaksi bulan ini')+'</td></tr>';
 }
 
 // =============================================
@@ -2082,6 +2212,13 @@ prosesTransaksi=async function(){
   if(tarikTunaiItems.length>0 && totalNominalTarik===0){
     showToast('⚠️ Isi Nominal Tarik pada item TarikTunai!','error'); return;
   }
+  
+  // Build TT admin summary for struk
+  const ttAdminParts=tarikTunaiItems.filter(i=>i.adminFee>0).map(i=>{
+    const modeLabel=i.adminMode==='diluar'?'diluar nominal':'potong nominal';
+    return `Admin ${fmt(i.adminFee)} (${modeLabel})`;
+  });
+  const ttAdminSummary=ttAdminParts.join(' · ');
 
   const trx={
     id:trxId,
@@ -2090,7 +2227,7 @@ prosesTransaksi=async function(){
     items:cart.map(i=>({...i})),
     subtotal,fee,laba,total,bayar,kembalian,
     method:selectedMethod,catatan,service,
-    totalNominalTarik // simpan di trx untuk struk & rekap
+    totalNominalTarik,ttAdminSummary // simpan di trx untuk struk & rekap
   };
   riwayat.unshift(trx);
   todayStats.trx++;todayStats.total+=total;todayStats.laba+=laba;
