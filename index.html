@@ -5,6 +5,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Konter HP — POS Premium v2</title>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<!-- Firebase SDK -->
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 <style>
 :root{--bg:#0d0d0f;--bg2:#141417;--bg3:#1a1a1f;--bg4:#222228;--border:#2a2a32;--border2:#363640;--text:#f0f0f5;--text2:#9090a0;--text3:#606070;--accent:#6c63ff;--accent2:#8b83ff;--green:#22c55e;--green2:#16a34a;--red:#ef4444;--amber:#f59e0b;--cyan:#06b6d4;--pink:#ec4899;--r:10px;--r2:14px;}
 *{margin:0;padding:0;box-sizing:border-box;}
@@ -221,6 +224,14 @@ body{background:var(--bg);color:var(--text);font-family:'Space Grotesk',sans-ser
 .confirm-actions{display:flex;gap:7px;}
 .btn-confirm-del{flex:1;padding:9px;background:var(--red);border:none;border-radius:var(--r);color:#fff;font-size:12px;font-weight:700;cursor:pointer;font-family:'Space Grotesk',sans-serif;}
 .btn-confirm-cancel{flex:1;padding:9px;background:var(--bg3);border:1px solid var(--border2);border-radius:var(--r);color:var(--text);font-size:12px;font-weight:600;cursor:pointer;font-family:'Space Grotesk',sans-serif;}
+/* SYNC STATUS */
+.sync-pill{font-size:10px;padding:3px 8px;border-radius:20px;font-weight:600;display:flex;align-items:center;gap:4px;transition:all .3s;}
+.sync-pill.online{background:rgba(34,197,94,.12);color:var(--green);border:1px solid rgba(34,197,94,.25);}
+.sync-pill.offline{background:rgba(239,68,68,.12);color:var(--red);border:1px solid rgba(239,68,68,.25);}
+.sync-pill.syncing{background:rgba(245,158,11,.12);color:var(--amber);border:1px solid rgba(245,158,11,.25);}
+.sync-dot{width:6px;height:6px;border-radius:50%;background:currentColor;display:inline-block;}
+.sync-dot.pulse{animation:pulse 1.2s infinite;}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
 /* BACKUP */
 .backup-btn{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;padding:16px 12px;background:var(--bg3);border:1px solid var(--border2);border-radius:var(--r2);cursor:pointer;transition:all .15s;font-family:'Space Grotesk',sans-serif;color:var(--text);text-align:center;}
 .backup-btn:hover{border-color:var(--accent);background:var(--bg4);}
@@ -242,7 +253,7 @@ body{background:var(--bg);color:var(--text);font-family:'Space Grotesk',sans-ser
 <div class="topbar">
   <div class="brand">
     <div class="brand-icon">📱</div>
-    <div><div class="brand-name">Konter HP Premium POS</div><div class="brand-sub">v3.0 — offline + backup + excel</div></div>
+    <div><div class="brand-name">Konter HP Premium POS</div><div class="brand-sub">v4.0 — realtime sync Firebase</div></div>
   </div>
   <div class="topbar-stats">
     <div class="tstat"><div class="tstat-label">Transaksi</div><div class="tstat-val accent" id="stat-trx">0</div></div>
@@ -250,7 +261,8 @@ body{background:var(--bg);color:var(--text);font-family:'Space Grotesk',sans-ser
     <div class="tstat"><div class="tstat-label">Laba</div><div class="tstat-val amber" id="stat-laba">Rp 0</div></div>
   </div>
   <div style="display:flex;align-items:center;gap:8px;">
-    <span id="db-status" title="Status database" style="font-size:10px;padding:3px 8px;border-radius:20px;background:rgba(34,197,94,.12);color:var(--green);border:1px solid rgba(34,197,94,.25);font-weight:600;">⚡ DB OK</span>
+    <span id="sync-status" class="sync-pill syncing"><span class="sync-dot pulse"></span><span id="sync-label">Menghubungkan...</span></span>
+    <span id="db-status" title="Status database lokal" style="font-size:10px;padding:3px 8px;border-radius:20px;background:rgba(34,197,94,.12);color:var(--green);border:1px solid rgba(34,197,94,.25);font-weight:600;">⚡ DB OK</span>
     <div class="datetime" id="clock">—</div>
   </div>
 </div>
@@ -401,7 +413,16 @@ body{background:var(--bg);color:var(--text);font-family:'Space Grotesk',sans-ser
     </div>
   </div>
   <div class="form-section">
-    <div class="rsec-head" style="padding:0 0 12px;border:none;"><span class="rsec-title">🗄️ Info Database Lokal</span></div>
+    <div class="form-title">☁️ Status Sinkronisasi Firebase</div>
+    <div id="firebase-info" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;margin-bottom:12px;">
+      <div class="db-info-card"><div class="sc-label">Status Cloud</div><div class="sc-val" id="fi-status" style="font-size:13px;color:var(--amber)">Menghubungkan...</div></div>
+      <div class="db-info-card"><div class="sc-label">Project ID</div><div class="sc-val" style="font-size:11px;color:var(--cyan)">catatan-pos</div></div>
+      <div class="db-info-card"><div class="sc-label">Last Sync</div><div class="sc-val" id="fi-lastsync" style="font-size:12px;color:var(--text2)">—</div></div>
+      <div class="db-info-card"><div class="sc-label">Listener Aktif</div><div class="sc-val" id="fi-listeners" style="font-size:13px;color:var(--green)">0</div></div>
+    </div>
+    <button class="btn-save-produk" style="background:var(--accent);margin-top:0" onclick="forceSyncFromCloud()">🔄 Force Sync dari Cloud</button>
+  </div>
+  <div class="form-section">
     <div id="db-info-cards" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;"></div>
     <div style="margin-top:12px;display:flex;gap:8px;">
       <button class="btn-save-produk" style="background:var(--accent);margin-top:0" onclick="refreshDbInfo()">🔄 Refresh Info</button>
@@ -799,7 +820,248 @@ function showToast(msg,type=''){
 }
 
 // =============================================
-// DATABASE — IndexedDB (offline-safe)
+// FIREBASE CONFIG & INIT
+// =============================================
+const firebaseConfig = {
+  apiKey: "AIzaSyA31Sgb08Tf_3XuTzVH9kbbfUOm0DYD79Q",
+  authDomain: "catatan-pos.firebaseapp.com",
+  projectId: "catatan-pos",
+  storageBucket: "catatan-pos.firebasestorage.app",
+  messagingSenderId: "617035820628",
+  appId: "1:617035820628:web:ba578456eccbefdb38c7c1",
+  measurementId: "G-BKS5WYM2M9"
+};
+
+let fsdb = null;
+let activeListeners = 0;
+let lastSyncTime = null;
+let isOnline = false;
+let unsubRiwayat = null;
+let unsubProduk = null;
+let unsubMeta = null;
+
+function initFirebase() {
+  try {
+    firebase.initializeApp(firebaseConfig);
+    fsdb = firebase.firestore();
+    fsdb.enablePersistence({ synchronizeTabs: true })
+      .catch(err => {
+        if (err.code === 'failed-precondition') console.warn('Multi-tab persistence aktif di tab lain');
+        else if (err.code === 'unimplemented') console.warn('Browser tidak support offline persistence');
+      });
+    setSyncStatus('syncing', 'Menghubungkan...');
+    startRealtimeListeners();
+    monitorConnection();
+  } catch (e) {
+    console.error('Firebase init error', e);
+    setSyncStatus('offline', 'Firebase Error');
+  }
+}
+
+// =============================================
+// SYNC STATUS UI
+// =============================================
+function setSyncStatus(state, label) {
+  const pill = document.getElementById('sync-status');
+  const lbl = document.getElementById('sync-label');
+  const dot = pill.querySelector('.sync-dot');
+  pill.className = 'sync-pill ' + state;
+  lbl.textContent = label;
+  dot.className = 'sync-dot' + (state === 'syncing' ? ' pulse' : '');
+  isOnline = state === 'online';
+  // update firebase info panel
+  const fi = document.getElementById('fi-status');
+  if (fi) fi.textContent = state === 'online' ? '🟢 Terhubung' : state === 'syncing' ? '🟡 Menghubungkan' : '🔴 Offline';
+  if (state === 'online') {
+    lastSyncTime = new Date();
+    const ls = document.getElementById('fi-lastsync');
+    if (ls) ls.textContent = lastSyncTime.toLocaleTimeString('id-ID');
+  }
+}
+
+function updateListenerCount(n) {
+  activeListeners = n;
+  const el = document.getElementById('fi-listeners');
+  if (el) el.textContent = n;
+}
+
+function monitorConnection() {
+  window.addEventListener('online', () => setSyncStatus('online', 'Online ✓'));
+  window.addEventListener('offline', () => setSyncStatus('offline', 'Offline — data lokal'));
+  if (navigator.onLine) setSyncStatus('syncing', 'Menyinkron...');
+  else setSyncStatus('offline', 'Offline — data lokal');
+}
+
+// =============================================
+// REALTIME LISTENERS
+// =============================================
+function startRealtimeListeners() {
+  // --- Riwayat transaksi ---
+  if (unsubRiwayat) unsubRiwayat();
+  unsubRiwayat = fsdb.collection('riwayat')
+    .orderBy('_ts', 'desc')
+    .onSnapshot(snap => {
+      setSyncStatus('online', 'Online ✓');
+      const incoming = [];
+      snap.forEach(doc => {
+        const d = doc.data();
+        delete d._ts;
+        incoming.push(d);
+      });
+      // Merge: cloud is source of truth
+      riwayat = incoming;
+      // Recalc todayStats from all riwayat
+      recalcTodayStats();
+      updateTopStats();
+      renderRekap();
+      // Sync to local IndexedDB
+      syncRiwayatToLocal(incoming);
+      lastSyncTime = new Date();
+      const ls = document.getElementById('fi-lastsync');
+      if (ls) ls.textContent = lastSyncTime.toLocaleTimeString('id-ID');
+    }, err => {
+      console.error('Riwayat listener error', err);
+      setSyncStatus('offline', 'Offline — data lokal');
+    });
+
+  // --- Produk ---
+  if (unsubProduk) unsubProduk();
+  unsubProduk = fsdb.collection('produk')
+    .onSnapshot(snap => {
+      if (snap.empty) {
+        // Push default products to cloud on first run
+        pushDefaultProdukToCloud();
+        return;
+      }
+      const incoming = [];
+      snap.forEach(doc => incoming.push(doc.data()));
+      PRODUCTS = incoming;
+      renderFilterTabs(); renderProducts(); renderProdukList();
+      syncProdukToLocal(incoming);
+    }, err => {
+      console.error('Produk listener error', err);
+    });
+
+  // --- Meta (counter) ---
+  if (unsubMeta) unsubMeta();
+  unsubMeta = fsdb.collection('meta').doc('counter')
+    .onSnapshot(snap => {
+      if (snap.exists) {
+        const d = snap.data();
+        if (d.value > trxCounter) trxCounter = d.value;
+      }
+    }, err => console.error('Meta listener error', err));
+
+  updateListenerCount(3);
+}
+
+function recalcTodayStats() {
+  const today = new Date().toLocaleDateString('id-ID');
+  let trx = 0, total = 0, laba = 0;
+  riwayat.forEach(t => {
+    if (t.tanggal === today) { trx++; total += t.total; laba += t.laba; }
+  });
+  todayStats = { trx, total, laba };
+}
+
+// =============================================
+// CLOUD WRITE HELPERS
+// =============================================
+async function cloudSaveTrx(trx) {
+  if (!fsdb) return;
+  try {
+    await fsdb.collection('riwayat').doc(trx.id).set({
+      ...trx,
+      _ts: firebase.firestore.FieldValue.serverTimestamp()
+    });
+  } catch (e) {
+    console.error('Cloud save trx error', e);
+    showToast('⚠️ Gagal sync ke cloud, tersimpan lokal', 'error');
+  }
+}
+
+async function cloudDeleteTrx(trxId) {
+  if (!fsdb) return;
+  try { await fsdb.collection('riwayat').doc(trxId).delete(); }
+  catch (e) { console.error('Cloud delete trx error', e); }
+}
+
+async function cloudSaveProduk(produk) {
+  if (!fsdb) return;
+  try {
+    const batch = fsdb.batch();
+    // Clear existing and rewrite (simple approach)
+    const snap = await fsdb.collection('produk').get();
+    snap.forEach(doc => batch.delete(doc.ref));
+    produk.forEach(p => {
+      const ref = fsdb.collection('produk').doc(p.kode);
+      batch.set(ref, p);
+    });
+    await batch.commit();
+  } catch (e) { console.error('Cloud save produk error', e); }
+}
+
+async function cloudSaveMeta() {
+  if (!fsdb) return;
+  try {
+    await fsdb.collection('meta').doc('counter').set({ key: 'counter', value: trxCounter });
+  } catch (e) { console.error('Cloud save meta error', e); }
+}
+
+async function pushDefaultProdukToCloud() {
+  if (!fsdb || !PRODUCTS.length) return;
+  try {
+    const batch = fsdb.batch();
+    PRODUCTS.forEach(p => {
+      batch.set(fsdb.collection('produk').doc(p.kode), p);
+    });
+    await batch.commit();
+    showToast('☁️ Produk default dikirim ke cloud', 'success');
+  } catch (e) { console.error('Push default produk error', e); }
+}
+
+async function forceSyncFromCloud() {
+  if (!fsdb) { showToast('⚠️ Firebase belum terhubung!', 'error'); return; }
+  setSyncStatus('syncing', 'Menyinkron...');
+  showToast('🔄 Memuat data dari cloud...', '');
+  try {
+    const [trxSnap, prodSnap, metaSnap] = await Promise.all([
+      fsdb.collection('riwayat').orderBy('_ts', 'desc').get(),
+      fsdb.collection('produk').get(),
+      fsdb.collection('meta').doc('counter').get()
+    ]);
+    riwayat = [];
+    trxSnap.forEach(doc => { const d = doc.data(); delete d._ts; riwayat.push(d); });
+    if (!prodSnap.empty) { PRODUCTS = []; prodSnap.forEach(doc => PRODUCTS.push(doc.data())); }
+    if (metaSnap.exists && metaSnap.data().value > trxCounter) trxCounter = metaSnap.data().value;
+    recalcTodayStats(); updateTopStats(); renderRekap(); renderFilterTabs(); renderProducts(); renderProdukList();
+    setSyncStatus('online', 'Online ✓');
+    showToast('✓ Sync dari cloud berhasil!', 'success');
+  } catch (e) {
+    setSyncStatus('offline', 'Offline — data lokal');
+    showToast('⚠️ Gagal sync dari cloud!', 'error');
+  }
+}
+
+// =============================================
+// LOCAL DB SYNC HELPERS
+// =============================================
+async function syncRiwayatToLocal(list) {
+  if (!db) return;
+  try {
+    await dbClear('riwayat');
+    for (const t of list) await dbPut('riwayat', t);
+  } catch (e) { console.error('Local riwayat sync error', e); }
+}
+
+async function syncProdukToLocal(list) {
+  if (!db) return;
+  try {
+    await dbClear('produk');
+    for (const p of list) await dbPut('produk', p);
+  } catch (e) { console.error('Local produk sync error', e); }
+}
+
 // =============================================
 const DB_NAME='konterHP_db', DB_VER=1;
 let db=null;
@@ -925,8 +1187,11 @@ prosesTransaksi=async function(){
   riwayat.unshift(trx);
   todayStats.trx++;todayStats.total+=total;todayStats.laba+=laba;
   updateTopStats(); showStruk(trx);
+  // Save local + cloud
   await saveRiwayatToDB(trx);
   await saveMeta();
+  await cloudSaveTrx(trx);
+  await cloudSaveMeta();
 };
 
 const _origHapusTrx=hapusTrx;
@@ -938,6 +1203,8 @@ hapusTrx=async function(trxId){
   showToast('🗑️ Transaksi '+trxId+' dihapus');
   await dbDelete('riwayat',trxId);
   await saveMeta();
+  await cloudDeleteTrx(trxId);
+  await cloudSaveMeta();
 };
 
 const _origSaveEdit=saveEdit;
@@ -960,6 +1227,8 @@ saveEdit=async function(trxId){
   showToast('✓ Transaksi '+trxId+' diperbarui','success');
   await saveRiwayatToDB(trx);
   await saveMeta();
+  await cloudSaveTrx(trx);
+  await cloudSaveMeta();
 };
 
 const _origSaveProduk=saveProduk;
@@ -978,6 +1247,7 @@ saveProduk=async function(){
   renderProdukList();renderFilterTabs();renderProducts();
   showToast('✓ Produk '+kode+' berhasil ditambahkan','success');
   await saveAllProdukToDB();
+  await cloudSaveProduk(PRODUCTS);
 };
 
 const _origHapusProduk=hapusProduk;
@@ -986,6 +1256,7 @@ hapusProduk=async function(kode){
   renderProdukList();renderFilterTabs();renderProducts();
   showToast('🗑️ Produk '+kode+' dihapus');
   await saveAllProdukToDB();
+  await cloudSaveProduk(PRODUCTS);
 };
 
 // =============================================
@@ -1127,18 +1398,34 @@ async function executeRestore(){
   riwayat=_restoreData.riwayat||[];
   todayStats=_restoreData.todayStats||{trx:0,total:0,laba:0};
   trxCounter=_restoreData.trxCounter||1;
+  // Local DB
   await dbClear('riwayat');
   await dbClear('produk');
   await dbClear('meta');
   for(const t of riwayat) await dbPut('riwayat',t);
   await saveAllProdukToDB();
   await saveMeta();
+  // Push to cloud
+  showToast('☁️ Mengirim data ke cloud...','');
+  if(fsdb){
+    try{
+      // Riwayat
+      const batch1=fsdb.batch();
+      const oldSnap=await fsdb.collection('riwayat').get();
+      oldSnap.forEach(doc=>batch1.delete(doc.ref));
+      await batch1.commit();
+      for(const t of riwayat) await cloudSaveTrx(t);
+      // Produk
+      await cloudSaveProduk(PRODUCTS);
+      await cloudSaveMeta();
+    }catch(e){ console.error('Cloud restore error',e); }
+  }
   renderFilterTabs();renderProducts();renderRekap();renderProdukList();updateTopStats();
   _restoreData=null;
   document.getElementById('restore-filename').textContent='Belum ada file dipilih';
   document.getElementById('btn-do-restore').disabled=true;
   document.getElementById('restore-file-input').value='';
-  showToast('✓ Restore berhasil!','success');
+  showToast('✓ Restore berhasil! Data tersinkron ke cloud.','success');
 }
 
 // =============================================
@@ -1174,6 +1461,19 @@ async function resetAllData(){
   await dbClear('riwayat');
   await dbClear('produk');
   await dbClear('meta');
+  // Clear cloud
+  if(fsdb){
+    try{
+      const [trxSnap,prodSnap]=await Promise.all([
+        fsdb.collection('riwayat').get(),
+        fsdb.collection('produk').get()
+      ]);
+      const batch=fsdb.batch();
+      trxSnap.forEach(doc=>batch.delete(doc.ref));
+      prodSnap.forEach(doc=>batch.delete(doc.ref));
+      await batch.commit();
+    }catch(e){ console.error('Cloud reset error',e); }
+  }
   riwayat=[];todayStats={trx:0,total:0,laba:0};trxCounter=1;
   PRODUCTS=[];cart=[];
   updateTopStats();renderRekap();renderProdukList();renderFilterTabs();renderProducts();renderCart();
@@ -1208,6 +1508,8 @@ switchTab=function(tab){
     console.error('IndexedDB tidak tersedia, mode in-memory aktif',e);
   }
   renderFilterTabs();renderProducts();updateSummary();renderProdukList();updateTopStats();
+  // Init Firebase realtime sync
+  initFirebase();
 })();
 
 </script>
