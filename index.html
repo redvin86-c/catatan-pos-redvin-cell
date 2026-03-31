@@ -88,6 +88,12 @@ body{background:var(--bg);color:var(--text);font-family:'Space Grotesk',sans-ser
 .fee-suggest{display:flex;gap:3px;flex-wrap:wrap;margin-top:4px;}
 .fee-sug-btn{padding:2px 7px;background:var(--bg4);border:1px solid var(--border2);border-radius:20px;font-size:10px;color:var(--text3);cursor:pointer;font-family:'JetBrains Mono',monospace;transition:all .1s;}
 .fee-sug-btn:hover{background:rgba(245,158,11,.15);border-color:var(--amber);color:var(--amber);}
+/* NOMINAL TARIK — TarikTunai */
+.ci-nominal-row{display:flex;align-items:center;gap:6px;margin-top:5px;padding:5px 8px;background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.2);border-radius:6px;}
+.ci-nominal-label{font-size:10px;color:#fca5a5;font-weight:600;white-space:nowrap;}
+.ci-nominal-input{background:var(--bg4);border:1px solid rgba(239,68,68,.3);border-radius:5px;padding:3px 7px;font-size:11px;color:#fca5a5;flex:1;min-width:80px;font-family:'JetBrains Mono',monospace;outline:none;}
+.ci-nominal-input:focus{border-color:var(--red);}
+.nominal-hint{font-size:9px;color:var(--text3);margin-top:2px;}
 .ci-controls{display:flex;flex-direction:column;align-items:flex-end;gap:3px;}
 .qty-btn-group{display:flex;align-items:center;gap:3px;}
 .qty-btn{width:22px;height:22px;background:var(--bg4);border:1px solid var(--border2);border-radius:5px;color:var(--text);font-size:13px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .1s;}
@@ -396,6 +402,7 @@ body{background:var(--bg);color:var(--text);font-family:'Space Grotesk',sans-ser
       <div class="summary-row"><span class="label">Subtotal</span><span class="val" id="sum-subtotal">Rp 0</span></div>
       <div class="summary-row"><span class="label">Total Fee</span><span class="val" style="color:var(--amber)" id="sum-fee">Rp 0</span></div>
       <div class="summary-row laba"><span class="label">Estimasi Laba</span><span class="val" id="sum-laba">Rp 0</span></div>
+      <div class="summary-row" id="row-nominal-tarik" style="display:none"><span class="label" style="color:#fca5a5">💸 Nominal Tarik</span><span class="val" style="color:#fca5a5" id="sum-nominal-tarik">Rp 0</span></div>
       <div class="summary-row total"><span class="label">TOTAL BAYAR</span><span class="val" id="sum-total">Rp 0</span></div>
     </div>
     <div class="payment-section">
@@ -685,6 +692,10 @@ function updateFee(kode,val){
   const item=cart.find(c=>c.kode===kode); if(item) item.fee=parseInt(val)||0;
   updateSummary();
 }
+function updateNominal(kode,val){
+  const item=cart.find(c=>c.kode===kode); if(item) item.nominalTarik=parseInt(val)||0;
+  updateSummary();
+}
 function setFeeQ(kode,val){
   const item=cart.find(c=>c.kode===kode); if(!item) return;
   item.fee=val;
@@ -713,8 +724,18 @@ function renderCart(){
   }
   el.innerHTML=cart.map(item=>{
     const fee=isFeeP(item);
+    const isTT=item.kategori==='TarikTunai';
     const lt=fee?item.fee*item.qty:item.harga*item.qty;
     const sugs=fee?FEE_SUGGEST.map(v=>`<button class="fee-sug-btn" onclick="setFeeQ('${item.kode}',${v})">${fmtN(v)}</button>`).join(''):'';
+    const nominalBlock=isTT?`
+      <div class="ci-nominal-row">
+        <span class="ci-nominal-label">💸 Nominal Tarik:</span>
+        <input class="ci-nominal-input" data-kode="${item.kode}" type="number"
+          value="${item.nominalTarik||''}" placeholder="0"
+          oninput="updateNominal('${item.kode}',this.value)"
+          step="50000">
+      </div>
+      <div class="nominal-hint">⚠️ Laci akan berkurang sebesar nominal ini</div>`:'';
     return `<div class="cart-item">
       <div class="ci-info">
         <div class="ci-name">${item.nama}</div>
@@ -725,6 +746,7 @@ function renderCart(){
           <input class="ci-fee-input" data-kode="${item.kode}" type="number" value="${item.fee}" onchange="updateFee('${item.kode}',this.value)" placeholder="0" step="1000">
         </div>
         <div class="fee-suggest">${sugs}</div>`:''}
+        ${nominalBlock}
       </div>
       <div class="ci-controls">
         <button class="ci-del" onclick="removeFromCart('${item.kode}')">✕</button>
@@ -754,6 +776,14 @@ function updateSummary(){
   document.getElementById('sum-fee').textContent=fmt(fee);
   document.getElementById('sum-laba').textContent=fmt(laba);
   document.getElementById('sum-total').textContent=fmt(total);
+  // Nominal tarik row
+  const totalNominalTarik=cart.filter(i=>i.kategori==='TarikTunai').reduce((s,i)=>s+(i.nominalTarik||0),0);
+  const rowNT=document.getElementById('row-nominal-tarik');
+  const sumNT=document.getElementById('sum-nominal-tarik');
+  if(rowNT&&sumNT){
+    rowNT.style.display=totalNominalTarik>0?'':'none';
+    sumNT.textContent=fmt(totalNominalTarik);
+  }
   const qa=document.getElementById('quick-amounts');
   if(total>0&&selectedMethod==='Tunai'){
     qa.innerHTML=getQA(total).map(a=>`<button class="qa-btn" onclick="setBayar(${a})">${fmtS(a)}</button>`).join('');
@@ -817,7 +847,8 @@ function showStruk(trx){
     ${srvBlock}
     <div>${trx.items.map(item=>{
       const lt=isFeeP(item)?item.fee*item.qty:item.harga*item.qty;
-      return `<div class="struk-item"><span class="struk-item-name">${item.nama}${item.qty>1?' ×'+item.qty:''}</span><span class="struk-item-price">${fmt(lt)}</span></div>`;
+      const ttInfo=item.kategori==='TarikTunai'&&item.nominalTarik?`<span style="font-size:9px;color:#fca5a5;display:block">Nominal: ${fmt(item.nominalTarik)}</span>`:'';
+      return `<div class="struk-item"><span class="struk-item-name">${item.nama}${item.qty>1?' ×'+item.qty:''}<br>${ttInfo}</span><span class="struk-item-price">${fmt(lt)}</span></div>`;
     }).join('')}</div>
     <hr class="struk-divider">
     <div>
@@ -826,6 +857,7 @@ function showStruk(trx){
       <div class="struk-total-row" style="color:var(--text2)"><span>Metode</span><span>${trx.method}</span></div>
       ${showKembalian?`<div class="struk-total-row" style="color:var(--text2)"><span>Diterima</span><span>${fmt(trx.bayar)}</span></div><div class="struk-total-row kembalian"><span>Kembalian</span><span class="val">${fmt(trx.kembalian)}</span></div>`:''}
     </div>
+    ${trx.totalNominalTarik>0?`<div style="margin-top:7px;padding:6px 9px;background:rgba(239,68,68,.1);border:1px dashed rgba(239,68,68,.3);border-radius:6px;font-size:11px;display:flex;justify-content:space-between;"><span style="color:#fca5a5">💸 Total Nominal Tarik</span><span style="font-family:'JetBrains Mono',monospace;font-weight:700;color:#fca5a5">${fmt(trx.totalNominalTarik)}</span></div>`:''}
     ${trx.catatan?`<div style="margin-top:9px;font-size:11px;color:var(--text3);padding:7px 9px;background:var(--bg3);border-radius:6px">📝 ${trx.catatan}</div>`:''}
     <div class="struk-footer">Terima kasih telah berbelanja! 🙏</div>
     <div class="struk-actions">
@@ -1646,47 +1678,42 @@ prosesTransaksi=async function(){
   const service=getServiceData();
   const now=new Date();
   const trxId='TRX-'+String(trxCounter++).padStart(4,'0');
-  // Cek apakah ada TarikTunai
-  const hasTarikTunai=cart.some(i=>i.kategori==='TarikTunai');
-  const totalTarikTunai=cart.filter(i=>i.kategori==='TarikTunai').reduce((s,i)=>{
-    // Untuk TarikTunai fee-based, nominal yang ditarik = fee (bukan harga)
-    return s+(isFeeP(i)?i.fee*i.qty:i.harga*i.qty);
-  },0);
 
-  const trx={id:trxId,waktu:now.toLocaleTimeString('id-ID',{hour:'2-digit',minute:'2-digit'}),
-    tanggal:now.toLocaleDateString('id-ID'),items:cart.map(i=>({...i})),
-    subtotal,fee,laba,total,bayar,kembalian,method:selectedMethod,catatan,service};
+  // Hitung total nominal tarik dari semua item TarikTunai
+  const tarikTunaiItems=cart.filter(i=>i.kategori==='TarikTunai');
+  const totalNominalTarik=tarikTunaiItems.reduce((s,i)=>s+(i.nominalTarik||0),0);
+
+  // Validasi: jika ada TarikTunai tapi nominal tidak diisi, peringatkan
+  if(tarikTunaiItems.length>0 && totalNominalTarik===0){
+    showToast('⚠️ Isi Nominal Tarik pada item TarikTunai!','error'); return;
+  }
+
+  const trx={
+    id:trxId,
+    waktu:now.toLocaleTimeString('id-ID',{hour:'2-digit',minute:'2-digit'}),
+    tanggal:now.toLocaleDateString('id-ID'),
+    items:cart.map(i=>({...i})),
+    subtotal,fee,laba,total,bayar,kembalian,
+    method:selectedMethod,catatan,service,
+    totalNominalTarik // simpan di trx untuk struk & rekap
+  };
   riwayat.unshift(trx);
   todayStats.trx++;todayStats.total+=total;todayStats.laba+=laba;
 
   // === LOGIKA UANG LACI ===
-  // Transaksi Tunai: laci bertambah sebesar uang yg diterima, berkurang sebesar kembalian
   if(selectedMethod==='Tunai'){
-    if(raw){
-      uangLaci += bayar;      // uang masuk dari pelanggan
-      uangLaci -= kembalian;  // kembalian keluar dari laci
-    } else {
-      uangLaci += total;      // tidak ada kembalian, langsung tambah total
-    }
+    // Bayar tunai: uang masuk ke laci dikurangi kembalian
+    if(raw){ uangLaci += bayar - kembalian; }
+    else    { uangLaci += total; }
   }
-  // TarikTunai: uang fisik keluar dari laci (terlepas metode bayar fee-nya)
-  if(hasTarikTunai){
-    // Hitung total nominal yang ditarik (= subtotal dari item TarikTunai non-fee + fee dari fee-based)
-    const nominalTarik=cart.filter(i=>i.kategori==='TarikTunai').reduce((s,i)=>{
-      if(isFeeP(i)){
-        // fee-based: pelanggan bayar fee ke kita, kita kasih uang tunai
-        // nominal tarik = nilai yang diserahkan ke pelanggan (tidak termasuk fee kita)
-        // Tidak ada cara tahu nominal pastinya kecuali ada field, skip pengurangan laci otomatis
-        return s;
-      } else {
-        return s+i.harga*i.qty;
-      }
-    },0);
-    if(nominalTarik>0) uangLaci-=nominalTarik;
+  // TarikTunai: uang fisik KELUAR dari laci sebesar nominal tarik
+  // (pelanggan bayar via Transfer/QRIS, kasir keluarkan uang tunai)
+  if(totalNominalTarik>0){
+    uangLaci -= totalNominalTarik;
+    showToast(`💸 Laci berkurang ${fmt(totalNominalTarik)} (nominal tarik)`,'');
   }
 
   updateTopStats(); showStruk(trx);
-  // Save local + cloud
   await saveRiwayatToDB(trx);
   await saveMeta();
   await cloudSaveTrx(trx);
