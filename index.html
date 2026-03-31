@@ -36,6 +36,7 @@ body{background:var(--bg);color:var(--text);font-family:'Space Grotesk',sans-ser
 /* VIEWS */
 .view{display:none;flex:1;overflow:hidden;min-height:0;}
 .view.active{display:flex;}
+.view.rekap-view{overflow-y:auto!important;overflow-x:hidden;}
 /* KASIR */
 .kasir-view{flex:1;overflow:hidden;min-height:0;}
 .product-panel{flex:1;display:flex;flex-direction:column;overflow:hidden;border-right:1px solid var(--border);min-width:0;min-height:0;}
@@ -137,7 +138,7 @@ body{background:var(--bg);color:var(--text);font-family:'Space Grotesk',sans-ser
 .btn-proses:active{transform:scale(.98);}
 .btn-proses:disabled{opacity:.4;cursor:not-allowed;transform:none;}
 /* REKAP */
-.rekap-view{flex:1;overflow-y:auto!important;overflow-x:hidden;flex-direction:column;gap:14px;padding:14px;}
+.rekap-view{flex:1;overflow-y:auto;overflow-x:hidden;flex-direction:column;gap:14px;padding:14px;}
 .rekap-view::-webkit-scrollbar{width:4px;}
 .rekap-view::-webkit-scrollbar-thumb{background:var(--border2);}
 .rsec{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r2);overflow:hidden;}
