@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -163,19 +162,20 @@ body{background:var(--bg);color:var(--text);font-family:'Space Grotesk',sans-ser
 .produk-view{flex:1;overflow-y:auto;flex-direction:column;gap:14px;padding:16px;}
 .produk-view::-webkit-scrollbar{width:4px;}
 .produk-view::-webkit-scrollbar-thumb{background:var(--border2);}
-.form-section{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r2);padding:16px;}
+.form-section{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r2);padding:16px;flex-shrink:0;}
 .form-title{font-size:13px;font-weight:700;margin-bottom:13px;}
 .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:11px;}
 .fg{display:flex;flex-direction:column;gap:4px;}
 .fg.full{grid-column:1/-1;}
 .fg label{font-size:10px;color:var(--text3);font-weight:600;text-transform:uppercase;letter-spacing:.4px;}
-.fg input,.fg select{background:var(--bg3);border:1px solid var(--border2);border-radius:var(--r);padding:8px 11px;color:var(--text);font-family:'Space Grotesk',sans-serif;font-size:12px;outline:none;transition:border-color .15s;}
-.fg input:focus,.fg select:focus{border-color:var(--accent);}
+.fg input,.fg select,.fg textarea{background:var(--bg3);border:1px solid var(--border2);border-radius:var(--r);padding:8px 11px;color:var(--text);font-family:'Space Grotesk',sans-serif;font-size:12px;outline:none;transition:border-color .15s;}
+.fg input:focus,.fg select:focus,.fg textarea:focus{border-color:var(--accent);}
 .fg select option{background:var(--bg3);}
 .fg .hint{font-size:10px;color:var(--text3);}
 .btn-save-produk{padding:10px 20px;background:var(--green2);border:none;border-radius:var(--r);color:#fff;font-size:12px;font-weight:700;cursor:pointer;font-family:'Space Grotesk',sans-serif;transition:all .15s;margin-top:12px;}
 .btn-save-produk:hover{background:var(--green);}
-.produk-list-sec{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r2);overflow:hidden;}
+/* produk-list-sec: flex-shrink:0 agar ikut scroll parent, bukan scroll sendiri */
+.produk-list-sec{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r2);overflow:hidden;flex-shrink:0;}
 .produk-list-table{width:100%;border-collapse:collapse;font-size:12px;}
 .produk-list-table th{padding:8px 12px;text-align:left;font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.4px;border-bottom:1px solid var(--border);}
 .produk-list-table td{padding:8px 12px;border-bottom:1px solid var(--border);vertical-align:middle;}
@@ -259,11 +259,8 @@ body{background:var(--bg);color:var(--text);font-family:'Space Grotesk',sans-ser
 .bulan-select:focus{border-color:var(--accent);}
 .rekap-bulanan-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:8px;padding:14px;}
 
-/* PRODUK LIST scrollable */
-.produk-list-sec{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r2);display:flex;flex-direction:column;min-height:0;max-height:420px;}
-.produk-list-inner{overflow-y:auto;flex:1;}
-.produk-list-inner::-webkit-scrollbar{width:4px;}
-.produk-list-inner::-webkit-scrollbar-thumb{background:var(--border2);}
+/* PRODUK LIST scrollable via parent */
+.produk-list-inner{overflow:visible;}
 .produk-list-header{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;border-bottom:1px solid var(--border);flex-shrink:0;gap:8px;flex-wrap:wrap;}
 .produk-search-wrap{position:relative;flex:1;min-width:140px;}
 .produk-search-wrap input{width:100%;background:var(--bg3);border:1px solid var(--border2);border-radius:var(--r);padding:6px 10px 6px 28px;color:var(--text);font-family:'Space Grotesk',sans-serif;font-size:11px;outline:none;}
@@ -278,6 +275,21 @@ body{background:var(--bg);color:var(--text);font-family:'Space Grotesk',sans-ser
 .kat-chip-del{background:none;border:none;color:var(--text3);cursor:pointer;font-size:11px;line-height:1;padding:0;}
 .kat-chip-del:hover{color:var(--red);}
 
+/* SERVICE FORM dalam cart */
+.service-panel{background:var(--bg3);border:1px solid rgba(239,68,68,.3);border-radius:var(--r);padding:10px 12px;margin:6px 7px;display:none;}
+.service-panel.show{display:block;}
+.service-panel-title{font-size:10px;font-weight:700;color:#fca5a5;text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px;display:flex;align-items:center;gap:5px;}
+.service-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px;}
+.service-fg{display:flex;flex-direction:column;gap:3px;}
+.service-fg.full{grid-column:1/-1;}
+.service-fg label{font-size:9px;color:var(--text3);font-weight:600;text-transform:uppercase;letter-spacing:.4px;}
+.service-fg input,.service-fg select{background:var(--bg4);border:1px solid var(--border2);border-radius:6px;padding:6px 9px;color:var(--text);font-family:'Space Grotesk',sans-serif;font-size:11px;outline:none;}
+.service-fg input:focus,.service-fg select:focus{border-color:var(--red);}
+.service-fg select option{background:var(--bg3);}
+.kerusakan-chips{display:flex;flex-wrap:wrap;gap:4px;margin-top:5px;}
+.kerusakan-chip{padding:3px 9px;background:var(--bg4);border:1px solid var(--border2);border-radius:20px;font-size:10px;color:var(--text3);cursor:pointer;transition:all .1s;user-select:none;}
+.kerusakan-chip:hover{background:rgba(239,68,68,.12);border-color:var(--red);color:#fca5a5;}
+.kerusakan-chip.active{background:rgba(239,68,68,.2);border-color:var(--red);color:#fca5a5;}
 .backup-btn{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;padding:16px 12px;background:var(--bg3);border:1px solid var(--border2);border-radius:var(--r2);cursor:pointer;transition:all .15s;font-family:'Space Grotesk',sans-serif;color:var(--text);text-align:center;}
 .backup-btn:hover{border-color:var(--accent);background:var(--bg4);}
 .backup-btn-restore{padding:12px 16px;background:var(--green2);border:none;border-radius:var(--r);color:#fff;font-size:12px;font-weight:700;cursor:pointer;font-family:'Space Grotesk',sans-serif;white-space:nowrap;transition:all .15s;}
@@ -298,7 +310,7 @@ body{background:var(--bg);color:var(--text);font-family:'Space Grotesk',sans-ser
 <div class="topbar">
   <div class="brand">
     <div class="brand-icon">📱</div>
-    <div><div class="brand-name">Konter HP Premium POS</div><div class="brand-sub">v5.0 — realtime sync Firebase</div></div>
+    <div><div class="brand-name">Kasir Pos Redvin Cell</div><div class="brand-sub">v5.0 — realtime sync Firebase</div></div>
   </div>
   <div class="topbar-stats">
     <div class="tstat"><div class="tstat-label">Transaksi</div><div class="tstat-val accent" id="stat-trx">0</div></div>
@@ -351,6 +363,31 @@ body{background:var(--bg);color:var(--text);font-family:'Space Grotesk',sans-ser
     </div>
     <div class="cart-items" id="cart-items">
       <div class="cart-empty"><div class="cart-empty-ico">🛒</div><div>Pilih produk dari katalog</div></div>
+    </div>
+    <!-- SERVICE PANEL: muncul otomatis jika ada item kategori Service -->
+    <div class="service-panel" id="service-panel">
+      <div class="service-panel-title">🔧 Info Servis Pelanggan</div>
+      <div class="service-grid">
+        <div class="service-fg">
+          <label>Nama Pelanggan</label>
+          <input type="text" id="srv-nama" placeholder="cth: Budi Santoso">
+        </div>
+        <div class="service-fg">
+          <label>Nomor HP</label>
+          <input type="tel" id="srv-hp" placeholder="cth: 08123456789">
+        </div>
+        <div class="service-fg full">
+          <label>Jenis Kerusakan</label>
+          <input type="text" id="srv-kerusakan" placeholder="Tulis kerusakan atau pilih di bawah">
+          <div class="kerusakan-chips" id="kerusakan-chips">
+            <span class="kerusakan-chip" data-val="Konektor" onclick="toggleKerusakan(this,'Konektor')">🔌 Konektor</span>
+            <span class="kerusakan-chip" data-val="Baterai" onclick="toggleKerusakan(this,'Baterai')">🔋 Baterai</span>
+            <span class="kerusakan-chip" data-val="Ganti LCD" onclick="toggleKerusakan(this,'Ganti LCD')">📱 Ganti LCD</span>
+            <span class="kerusakan-chip" data-val="Service Mesin" onclick="toggleKerusakan(this,'Service Mesin')">⚙️ Service Mesin</span>
+            <span class="kerusakan-chip" data-val="Software/Flash" onclick="toggleKerusakan(this,'Software/Flash')">💾 Software/Flash</span>
+          </div>
+        </div>
+      </div>
     </div>
     <div class="note-row">
       <input type="text" id="catatan-input" placeholder="✏️ Catatan (opsional)">
@@ -637,9 +674,9 @@ function addToCart(kode){
   const prod=PRODUCTS.find(p=>p.kode===kode); if(!prod) return;
   const ex=cart.find(c=>c.kode===kode);
   if(ex){ex.qty++;}else{cart.push({...prod,qty:1,fee:0});}
-  renderCart(); showToast('✓ '+prod.nama+' ditambahkan','success');
+  renderCart(); checkServicePanel(); showToast('✓ '+prod.nama+' ditambahkan','success');
 }
-function removeFromCart(kode){cart=cart.filter(c=>c.kode!==kode);renderCart();}
+function removeFromCart(kode){cart=cart.filter(c=>c.kode!==kode);renderCart();checkServicePanel();}
 function updateQty(kode,d){
   const item=cart.find(c=>c.kode===kode); if(!item) return;
   item.qty=Math.max(1,item.qty+d); renderCart();
@@ -663,7 +700,7 @@ function setFeeQ(kode,val){
   });
   updateSummary();
 }
-function clearCart(){if(!cart.length) return;cart=[];document.getElementById('catatan-input').value='';renderCart();}
+function clearCart(){if(!cart.length) return;cart=[];document.getElementById('catatan-input').value='';clearServicePanel();checkServicePanel();renderCart();}
 
 const FEE_SUGGEST=[1000,2000,3000,4000,5000,7500,10000];
 
@@ -762,14 +799,22 @@ function prosesTransaksi(){}
 function showStruk(trx){
   const rawBayar=document.getElementById('bayar-input').value;
   const showKembalian=trx.method==='Tunai'&&rawBayar;
+  const srvBlock=trx.service?`
+    <div style="margin:8px 0;padding:8px 10px;background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.2);border-radius:7px;font-size:11px;">
+      <div style="font-weight:700;color:#fca5a5;margin-bottom:4px">🔧 Info Servis</div>
+      ${trx.service.nama?`<div style="color:var(--text2)">Pelanggan: <strong style="color:var(--text)">${trx.service.nama}</strong></div>`:''}
+      ${trx.service.hp?`<div style="color:var(--text2)">No. HP: <strong style="color:var(--text)">${trx.service.hp}</strong></div>`:''}
+      ${trx.service.kerusakan?`<div style="color:var(--text2)">Kerusakan: <strong style="color:var(--text)">${trx.service.kerusakan}</strong></div>`:''}
+    </div>`:'';
   openModal(`
     <div class="struk-header">
       <div class="struk-logo">📱</div>
-      <div class="struk-shop">KONTER HP PREMIUM</div>
+      <div class="struk-shop">KASIR POS REDVIN CELL</div>
       <div class="struk-tagline">Voucher · Pulsa · Aksesoris · Servis</div>
     </div>
     <hr class="struk-divider">
     <div class="struk-meta"><span>${trx.tanggal} ${trx.waktu}</span><span>${trx.id}</span></div>
+    ${srvBlock}
     <div>${trx.items.map(item=>{
       const lt=isFeeP(item)?item.fee*item.qty:item.harga*item.qty;
       return `<div class="struk-item"><span class="struk-item-name">${item.nama}${item.qty>1?' ×'+item.qty:''}</span><span class="struk-item-price">${fmt(lt)}</span></div>`;
@@ -789,7 +834,7 @@ function showStruk(trx){
     </div>`);
 }
 
-function newTrx(){closeModal();cart=[];document.getElementById('catatan-input').value='';document.getElementById('bayar-input').value='';renderCart();}
+function newTrx(){closeModal();cart=[];document.getElementById('catatan-input').value='';document.getElementById('bayar-input').value='';clearServicePanel();checkServicePanel();renderCart();}
 
 // --- REKAP ---
 function renderRekap(){
@@ -947,6 +992,38 @@ function showToast(msg,type=''){
   const t=document.getElementById('toast');
   t.textContent=msg;t.className='toast show '+type;
   clearTimeout(t._t); t._t=setTimeout(()=>t.classList.remove('show'),2400);
+}
+
+// =============================================
+// SERVICE PANEL
+// =============================================
+const KERUSAKAN_OPTIONS=['Konektor','Baterai','Ganti LCD','Service Mesin','Software/Flash'];
+
+function checkServicePanel(){
+  const hasService=cart.some(i=>i.kategori==='Service');
+  const panel=document.getElementById('service-panel');
+  if(panel) panel.classList.toggle('show',hasService);
+}
+
+function toggleKerusakan(el,val){
+  el.classList.toggle('active');
+  // Rebuild input from active chips
+  const active=[...document.querySelectorAll('.kerusakan-chip.active')].map(c=>c.dataset.val||c.textContent.replace(/^[^\w]+/,'').trim());
+  document.getElementById('srv-kerusakan').value=active.join(', ');
+}
+
+function clearServicePanel(){
+  const ids=['srv-nama','srv-hp','srv-kerusakan'];
+  ids.forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+  document.querySelectorAll('.kerusakan-chip').forEach(c=>c.classList.remove('active'));
+}
+
+function getServiceData(){
+  const nama=(document.getElementById('srv-nama')?.value||'').trim();
+  const hp=(document.getElementById('srv-hp')?.value||'').trim();
+  const kerusakan=(document.getElementById('srv-kerusakan')?.value||'').trim();
+  if(!nama&&!hp&&!kerusakan) return null;
+  return{nama,hp,kerusakan};
 }
 
 // =============================================
@@ -1564,19 +1641,50 @@ prosesTransaksi=async function(){
   const raw=document.getElementById('bayar-input').value;
   const bayar=selectedMethod==='Tunai'&&raw?parseInt(raw):total;
   if(selectedMethod==='Tunai'&&raw&&parseInt(raw)<total){showToast('⚠️ Uang diterima kurang!','error');return;}
-  const kembalian=bayar-total;
+  const kembalian=selectedMethod==='Tunai'&&raw?bayar-total:0;
   const catatan=document.getElementById('catatan-input').value;
+  const service=getServiceData();
   const now=new Date();
   const trxId='TRX-'+String(trxCounter++).padStart(4,'0');
+  // Cek apakah ada TarikTunai
+  const hasTarikTunai=cart.some(i=>i.kategori==='TarikTunai');
+  const totalTarikTunai=cart.filter(i=>i.kategori==='TarikTunai').reduce((s,i)=>{
+    // Untuk TarikTunai fee-based, nominal yang ditarik = fee (bukan harga)
+    return s+(isFeeP(i)?i.fee*i.qty:i.harga*i.qty);
+  },0);
+
   const trx={id:trxId,waktu:now.toLocaleTimeString('id-ID',{hour:'2-digit',minute:'2-digit'}),
     tanggal:now.toLocaleDateString('id-ID'),items:cart.map(i=>({...i})),
-    subtotal,fee,laba,total,bayar,kembalian,method:selectedMethod,catatan};
+    subtotal,fee,laba,total,bayar,kembalian,method:selectedMethod,catatan,service};
   riwayat.unshift(trx);
   todayStats.trx++;todayStats.total+=total;todayStats.laba+=laba;
-  // Update uang laci: tambah total jika tunai, kurang kembalian
-  if(selectedMethod==='Tunai'&&raw){
-    uangLaci+=bayar-kembalian; // = total diterima bersih
+
+  // === LOGIKA UANG LACI ===
+  // Transaksi Tunai: laci bertambah sebesar uang yg diterima, berkurang sebesar kembalian
+  if(selectedMethod==='Tunai'){
+    if(raw){
+      uangLaci += bayar;      // uang masuk dari pelanggan
+      uangLaci -= kembalian;  // kembalian keluar dari laci
+    } else {
+      uangLaci += total;      // tidak ada kembalian, langsung tambah total
+    }
   }
+  // TarikTunai: uang fisik keluar dari laci (terlepas metode bayar fee-nya)
+  if(hasTarikTunai){
+    // Hitung total nominal yang ditarik (= subtotal dari item TarikTunai non-fee + fee dari fee-based)
+    const nominalTarik=cart.filter(i=>i.kategori==='TarikTunai').reduce((s,i)=>{
+      if(isFeeP(i)){
+        // fee-based: pelanggan bayar fee ke kita, kita kasih uang tunai
+        // nominal tarik = nilai yang diserahkan ke pelanggan (tidak termasuk fee kita)
+        // Tidak ada cara tahu nominal pastinya kecuali ada field, skip pengurangan laci otomatis
+        return s;
+      } else {
+        return s+i.harga*i.qty;
+      }
+    },0);
+    if(nominalTarik>0) uangLaci-=nominalTarik;
+  }
+
   updateTopStats(); showStruk(trx);
   // Save local + cloud
   await saveRiwayatToDB(trx);
