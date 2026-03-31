@@ -32,7 +32,7 @@ body{background:var(--bg);color:var(--text);font-family:'Space Grotesk',sans-ser
 .nav-tabs::-webkit-scrollbar{height:0;}
 .nav-tab{padding:11px 16px;font-size:13px;font-weight:700;cursor:pointer;color:rgba(255,255,255,0.42);border-bottom:2px solid transparent;transition:all .15s;display:flex;align-items:center;gap:6px;user-select:none;white-space:nowrap;flex-shrink:0;letter-spacing:.01em;}
 .nav-tab:hover{color:rgba(255,255,255,0.78);}
-.nav-tab.active{color:#ffffff;border-bottom-color:var(--accent);}
+.nav-tab.active{color:#ffffff;border-bottom-color:var(--accent);background:rgba(108,99,255,0.13);border-radius:6px 6px 0 0;}
 /* VIEWS */
 .view{display:none;flex:1;overflow:hidden;min-height:0;}
 .view.active{display:flex;}
@@ -65,15 +65,16 @@ body{background:var(--bg);color:var(--text);font-family:'Space Grotesk',sans-ser
 .prod-app{font-size:10px;color:var(--text3);margin-top:2px;}
 .no-products{grid-column:1/-1;text-align:center;padding:40px;color:var(--text3);}
 /* CART */
-.cart-panel{width:300px;flex-shrink:0;display:flex;flex-direction:column;background:var(--bg2);overflow:hidden;min-height:0;}
+.cart-panel{width:300px;flex-shrink:0;display:flex;flex-direction:column;background:var(--bg2);overflow:hidden;min-height:0;position:relative;}
 .cart-header{padding:9px 12px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-shrink:0;}
 .cart-title{font-size:13px;font-weight:700;}
 .cart-count{background:var(--accent);color:#fff;font-size:10px;font-weight:700;padding:2px 7px;border-radius:20px;font-family:'JetBrains Mono',monospace;}
 .cart-clear{font-size:11px;color:var(--text3);cursor:pointer;padding:3px 7px;border-radius:5px;transition:all .15s;}
 .cart-clear:hover{background:var(--bg4);color:var(--red);}
-.cart-items{flex:1;overflow-y:auto;padding:7px;min-height:0;}
-.cart-items::-webkit-scrollbar{width:3px;}
-.cart-items::-webkit-scrollbar-thumb{background:var(--border2);}
+.cart-scroll-wrap{flex:1;overflow-y:auto;display:flex;flex-direction:column;min-height:0;}
+.cart-items{padding:7px;overflow-x:hidden;}
+.cart-scroll-wrap::-webkit-scrollbar{width:3px;}
+.cart-scroll-wrap::-webkit-scrollbar-thumb{background:var(--border2);}
 .cart-empty{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;color:var(--text3);font-size:12px;gap:8px;}
 .cart-empty-ico{font-size:34px;opacity:.3;}
 .cart-item{background:var(--bg3);border:1px solid var(--border);border-radius:var(--r);padding:9px 10px;margin-bottom:6px;display:flex;gap:8px;align-items:flex-start;animation:slideIn .17s ease;}
@@ -283,7 +284,7 @@ body{background:var(--bg);color:var(--text);font-family:'Space Grotesk',sans-ser
 .kat-chip-del:hover{color:var(--red);}
 
 /* SERVICE FORM dalam cart */
-.service-panel{background:var(--bg3);border:1px solid rgba(239,68,68,.3);border-radius:var(--r);padding:10px 12px;margin:6px 7px;display:none;}
+.service-panel{background:var(--bg3);border:1px solid rgba(239,68,68,.3);border-radius:var(--r);padding:10px 12px;margin:0 7px 10px;display:none;}
 .service-panel.show{display:block;}
 .service-panel-title{font-size:10px;font-weight:700;color:#fca5a5;text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px;display:flex;align-items:center;gap:5px;}
 .service-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px;}
@@ -325,7 +326,7 @@ body{background:var(--bg);color:var(--text);font-family:'Space Grotesk',sans-ser
 .manual-view::-webkit-scrollbar-thumb{background:var(--border2);}
 .manual-left{flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:14px;border-right:1px solid var(--border);}
 .manual-right{width:280px;flex-shrink:0;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:12px;}
-.manual-item-row{display:grid;grid-template-columns:1fr 68px 62px 44px 26px;gap:4px;align-items:center;background:var(--bg3);border:1px solid var(--border);border-radius:var(--r);padding:6px 8px;}
+.manual-item-row{display:grid;grid-template-columns:140px 68px 62px 44px 26px;gap:4px;align-items:center;background:var(--bg3);border:1px solid var(--border);border-radius:var(--r);padding:6px 8px;}
 .manual-item-row input{background:var(--bg4);border:1px solid var(--border2);border-radius:6px;padding:4px 5px;color:var(--text);font-family:'Space Grotesk',sans-serif;font-size:11px;outline:none;width:100%;}
 .manual-item-row input[type=number]{font-family:'JetBrains Mono',monospace;color:var(--accent2);text-align:right;padding:4px 4px;}
 .manual-item-row input:focus{border-color:var(--accent);}
@@ -427,6 +428,7 @@ body{background:var(--bg);color:var(--text);font-family:'Space Grotesk',sans-ser
         <span class="cart-clear" onclick="clearCart()">Hapus semua</span>
       </div>
     </div>
+    <div class="cart-scroll-wrap" id="cart-scroll-wrap">
     <div class="cart-items" id="cart-items">
       <div class="cart-empty"><div class="cart-empty-ico">🛒</div><div>Pilih produk dari katalog</div></div>
     </div>
@@ -471,6 +473,7 @@ body{background:var(--bg);color:var(--text);font-family:'Space Grotesk',sans-ser
         </div>
       </div>
     </div>
+    </div><!-- end cart-scroll-wrap -->
     <div class="note-row">
       <input type="text" id="catatan-input" placeholder="✏️ Catatan (opsional)">
     </div>
@@ -575,6 +578,29 @@ body{background:var(--bg);color:var(--text);font-family:'Space Grotesk',sans-ser
     <div class="rsec-head">
       <span class="rsec-title">🧾 Semua Transaksi</span>
       <span id="rekap-trx-count" style="font-size:11px;color:var(--text3)">0 transaksi</span>
+    </div>
+    <div style="padding:9px 14px;border-bottom:1px solid var(--border);display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+      <div style="position:relative;flex:1;min-width:160px;max-width:300px;">
+        <span style="position:absolute;left:9px;top:50%;transform:translateY(-50%);color:var(--text3);font-size:12px;pointer-events:none;">🔍</span>
+        <input type="text" id="rekap-search" placeholder="Cari ID, produk, metode..."
+          oninput="renderRekap()"
+          style="width:100%;background:var(--bg3);border:1px solid var(--border2);border-radius:var(--r);padding:7px 10px 7px 30px;color:var(--text);font-family:'Space Grotesk',sans-serif;font-size:12px;outline:none;"
+          onfocus="this.style.borderColor='var(--accent)'" onblur="this.style.borderColor='var(--border2)'">
+      </div>
+      <select id="rekap-filter-method" onchange="renderRekap()" style="background:var(--bg3);border:1px solid var(--border2);border-radius:var(--r);padding:7px 10px;color:var(--text);font-family:'Space Grotesk',sans-serif;font-size:12px;outline:none;">
+        <option value="">Semua Metode</option>
+        <option value="Tunai">💵 Tunai</option>
+        <option value="Transfer">🏦 Transfer</option>
+        <option value="QRIS">📲 QRIS</option>
+      </select>
+      <select id="rekap-filter-tanggal" onchange="renderRekap()" style="background:var(--bg3);border:1px solid var(--border2);border-radius:var(--r);padding:7px 10px;color:var(--text);font-family:'Space Grotesk',sans-serif;font-size:12px;outline:none;">
+        <option value="">Semua Tanggal</option>
+        <option value="today">📅 Hari Ini</option>
+        <option value="week">📆 7 Hari</option>
+      </select>
+      <button onclick="document.getElementById('rekap-search').value='';document.getElementById('rekap-filter-method').value='';document.getElementById('rekap-filter-tanggal').value='';renderRekap();"
+        style="padding:7px 11px;background:var(--bg3);border:1px solid var(--border2);border-radius:var(--r);color:var(--text2);font-size:11px;cursor:pointer;font-family:'Space Grotesk',sans-serif;transition:all .15s;"
+        onmouseover="this.style.borderColor='var(--red)';this.style.color='var(--red)'" onmouseout="this.style.borderColor='var(--border2)';this.style.color='var(--text2)'">✕ Reset</button>
     </div>
     <table class="rekap-table">
       <thead><tr><th>ID</th><th>Waktu</th><th>Items</th><th>Total</th><th>Laba</th><th>Metode</th><th>Aksi</th></tr></thead>
@@ -765,7 +791,7 @@ let PRODUCTS = [
 
 let cart=[], activeCategory='Semua', selectedMethod='Tunai';
 let riwayat=[], todayStats={trx:0,total:0,laba:0}, trxCounter=1;
-let uangLaci=0, totalPengeluaran=0, pengeluaranList=[];
+let uangLaci=0, laciBase=0, totalPengeluaran=0, pengeluaranList=[];
 let customKategori=['Voucher','Pulsa','Ewallet','PPOB','TarikTunai','Aksesoris','Service'];
 
 // --- CLOCK ---
@@ -855,7 +881,7 @@ function clearCart(){if(!cart.length) return;cart=[];document.getElementById('ca
 const FEE_SUGGEST=[1000,2000,3000,4000,5000,7500,10000];
 
 function renderCart(){
-  const el=document.getElementById('cart-items');
+  const el=document.getElementById('cart-scroll-wrap')||document.getElementById('cart-items');
   document.getElementById('cart-count').textContent=cart.reduce((s,c)=>s+c.qty,0);
   if(!cart.length){
     el.innerHTML='<div class="cart-empty"><div class="cart-empty-ico">🛒</div><div>Pilih produk dari katalog</div></div>';
@@ -1030,10 +1056,31 @@ function renderRekap(){
         <div class="kc-laba">${fmt(d.laba)}</div>
       </div>`).join('')
     :'<div style="padding:14px;color:var(--text3);font-size:12px">Belum ada data</div>';
-  // Table
-  document.getElementById('rekap-trx-count').textContent=riwayat.length+' transaksi';
-  document.getElementById('rekap-tbody').innerHTML=riwayat.length
-    ?riwayat.map(t=>`<tr>
+  // Table with search/filter
+  const rekapQ=(document.getElementById('rekap-search')?.value||'').toLowerCase();
+  const rekapMethod=document.getElementById('rekap-filter-method')?.value||'';
+  const rekapTanggal=document.getElementById('rekap-filter-tanggal')?.value||'';
+  const todayStr=new Date().toLocaleDateString('id-ID');
+  const weekAgo=new Date(); weekAgo.setDate(weekAgo.getDate()-7);
+  let filteredRiwayat=riwayat.filter(t=>{
+    if(rekapMethod&&t.method!==rekapMethod) return false;
+    if(rekapTanggal==='today'&&t.tanggal!==todayStr) return false;
+    if(rekapTanggal==='week'){
+      const parts=t.tanggal.split('/');
+      if(parts.length===3){
+        const d=new Date(parseInt(parts[2]),parseInt(parts[1])-1,parseInt(parts[0]));
+        if(d<weekAgo) return false;
+      }
+    }
+    if(rekapQ){
+      const haystack=(t.id+' '+t.items.map(i=>i.nama).join(' ')+' '+t.method+' '+t.tanggal).toLowerCase();
+      if(!haystack.includes(rekapQ)) return false;
+    }
+    return true;
+  });
+  document.getElementById('rekap-trx-count').textContent=filteredRiwayat.length+' / '+riwayat.length+' transaksi';
+  document.getElementById('rekap-tbody').innerHTML=filteredRiwayat.length
+    ?filteredRiwayat.map(t=>`<tr>
         <td><span class="trx-id">${t.id}</span></td>
         <td style="font-family:'JetBrains Mono',monospace;font-size:11px">${t.waktu}</td>
         <td style="max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--text2);font-size:11px">${t.items.map(i=>i.nama+(i.qty>1?'×'+i.qty:'')).join(', ')}</td>
@@ -1045,7 +1092,7 @@ function renderRekap(){
           <button class="btn-del-trx" onclick="confirmDel('${t.id}')">🗑️</button>
         </div></td>
       </tr>`).join('')
-    :'<tr><td colspan="7" style="text-align:center;padding:22px;color:var(--text3)">Belum ada transaksi</td></tr>';
+    :'<tr><td colspan="7" style="text-align:center;padding:22px;color:var(--text3)">'+(rekapQ||rekapMethod||rekapTanggal?'🔍 Tidak ada hasil pencarian':'Belum ada transaksi')+'</td></tr>';
 }
 
 // --- EDIT TRANSAKSI ---
@@ -1188,8 +1235,8 @@ function batalEditProduk(){
 // --- TOP STATS ---
 function updateTopStats(){
   document.getElementById('stat-trx').textContent=todayStats.trx;
-  document.getElementById('stat-total').textContent=fmtS(todayStats.total);
-  document.getElementById('stat-laba').textContent=fmtS(todayStats.laba);
+  document.getElementById('stat-total').textContent=fmt(todayStats.total);
+  document.getElementById('stat-laba').textContent=fmt(todayStats.laba);
   updateLaciStats();
 }
 
@@ -1228,6 +1275,11 @@ function checkServicePanel(){
   const hasService=cart.some(i=>i.kategori==='Service');
   const panel=document.getElementById('service-panel');
   if(panel) panel.classList.toggle('show',hasService);
+  // Ensure service panel is visible by scrolling cart-items to bottom when shown
+  if(hasService){
+    const ci=document.getElementById('cart-scroll-wrap');
+    if(ci) setTimeout(()=>ci.scrollTop=ci.scrollHeight,50);
+  }
 }
 
 function toggleKerusakan(el,val){
@@ -1267,17 +1319,35 @@ function getServiceData(){
 // =============================================
 // UANG LACI & PENGELUARAN
 // =============================================
+function calcUangLaci(){
+  // Hitung ulang uang laci dari semua transaksi + modal awal laci
+  let laci = laciBase;
+  riwayat.forEach(t => {
+    if(t.method === 'Tunai'){
+      const raw = t.bayar || t.total;
+      const kem = t.kembalian || 0;
+      laci += raw - kem;
+    }
+    if(t.totalNominalTarik > 0){
+      laci -= t.totalNominalTarik;
+    }
+  });
+  uangLaci = laci;
+  return laci;
+}
+
 function updateLaciStats(){
-  document.getElementById('stat-laci').textContent=fmtS(uangLaci);
-  document.getElementById('stat-pengeluaran').textContent=fmtS(totalPengeluaran);
+  calcUangLaci();
+  document.getElementById('stat-laci').textContent=fmt(uangLaci);
+  document.getElementById('stat-pengeluaran').textContent=fmt(totalPengeluaran);
   // Save to localStorage
-  localStorage.setItem('konterHP_laci',JSON.stringify({uangLaci,totalPengeluaran,pengeluaranList}));
+  localStorage.setItem('konterHP_laci',JSON.stringify({laciBase,totalPengeluaran,pengeluaranList}));
 }
 
 function loadLaciStats(){
   try{
     const d=JSON.parse(localStorage.getItem('konterHP_laci')||'{}');
-    uangLaci=d.uangLaci||0;
+    laciBase=d.laciBase!==undefined?d.laciBase:(d.uangLaci||0);
     totalPengeluaran=d.totalPengeluaran||0;
     pengeluaranList=d.pengeluaranList||[];
     updateLaciStats();
@@ -1285,13 +1355,18 @@ function loadLaciStats(){
 }
 
 function editLaci(){
+  calcUangLaci();
   openModal(`
     <div class="edit-modal-title">💵 Uang di Laci</div>
-    <div class="edit-fg" style="margin-bottom:12px">
-      <label>Jumlah Uang di Laci (Rp)</label>
-      <input type="number" id="laci-input" value="${uangLaci}" placeholder="0" style="width:100%;background:var(--bg3);border:1px solid var(--border2);border-radius:var(--r);padding:8px 10px;color:var(--text);font-family:'JetBrains Mono',monospace;font-size:14px;outline:none;text-align:right;">
+    <div style="padding:8px 10px;background:var(--bg3);border-radius:var(--r);margin-bottom:10px;font-size:11px;color:var(--text2)">
+      <div>💰 Uang saat ini (otomatis): <strong style="color:var(--cyan);font-family:'JetBrains Mono',monospace">${fmt(uangLaci)}</strong></div>
+      <div style="margin-top:4px;font-size:10px;color:var(--text3)">Dihitung otomatis dari transaksi tunai + modal awal laci</div>
     </div>
-    <p style="font-size:11px;color:var(--text3);margin-bottom:12px">Input jumlah uang fisik yang ada di laci / kas.</p>
+    <div class="edit-fg" style="margin-bottom:12px">
+      <label>Modal Awal Laci (Rp) — Uang sebelum buka toko</label>
+      <input type="number" id="laci-input" value="${laciBase}" placeholder="0" style="width:100%;background:var(--bg3);border:1px solid var(--border2);border-radius:var(--r);padding:8px 10px;color:var(--text);font-family:'JetBrains Mono',monospace;font-size:14px;outline:none;text-align:right;">
+    </div>
+    <p style="font-size:11px;color:var(--text3);margin-bottom:12px">Isi modal awal uang di laci sebelum transaksi. Nilai laci otomatis bertambah/berkurang sesuai transaksi tunai.</p>
     <div class="edit-actions">
       <button class="btn-cancel-edit" onclick="closeModal()">Batal</button>
       <button class="btn-save-edit" onclick="saveLaci()">💾 Simpan</button>
@@ -1299,9 +1374,9 @@ function editLaci(){
 }
 
 function saveLaci(){
-  uangLaci=parseInt(document.getElementById('laci-input').value)||0;
+  laciBase=parseInt(document.getElementById('laci-input').value)||0;
   updateLaciStats();closeModal();
-  showToast('✓ Uang laci diperbarui','success');
+  showToast('✓ Modal awal laci diperbarui','success');
 }
 
 function editPengeluaran(){
@@ -2020,20 +2095,10 @@ prosesTransaksi=async function(){
   riwayat.unshift(trx);
   todayStats.trx++;todayStats.total+=total;todayStats.laba+=laba;
 
-  // === LOGIKA UANG LACI ===
-  if(selectedMethod==='Tunai'){
-    // Bayar tunai: uang masuk ke laci dikurangi kembalian
-    if(raw){ uangLaci += bayar - kembalian; }
-    else    { uangLaci += total; }
-  }
-  // TarikTunai: uang fisik KELUAR dari laci sebesar nominal tarik
-  // (pelanggan bayar via Transfer/QRIS, kasir keluarkan uang tunai)
+  updateTopStats(); showStruk(trx);
   if(totalNominalTarik>0){
-    uangLaci -= totalNominalTarik;
     showToast(`💸 Laci berkurang ${fmt(totalNominalTarik)} (nominal tarik)`,'');
   }
-
-  updateTopStats(); showStruk(trx);
   await saveRiwayatToDB(trx);
   await saveMeta();
   await cloudSaveTrx(trx);
@@ -2450,11 +2515,6 @@ async function prosesTransaksiManual(){
   };
   riwayat.unshift(trx);
   todayStats.trx++;todayStats.total+=totalJual;todayStats.laba+=laba;
-  // Update laci
-  if(method==='Tunai'){
-    if(bayarRaw){ uangLaci+=bayar-kembalian; }
-    else{ uangLaci+=totalJual; }
-  }
   updateTopStats();
   // Reset form
   manualItems=[{nama:'',harga:0,modal:0,qty:1}];
