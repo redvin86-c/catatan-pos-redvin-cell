@@ -16,8 +16,8 @@ body{background:var(--bg);color:var(--text);font-family:'Space Grotesk',sans-ser
 .topbar{background:var(--bg2);border-bottom:1px solid var(--border);padding:0 18px;height:66px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;z-index:100;}
 .brand{display:flex;align-items:center;gap:10px;}
 .brand-icon{width:36px;height:36px;background:linear-gradient(135deg,var(--accent),var(--pink));border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:18px;}
-.brand-name{font-size:14px;font-weight:700;color:#fff;}
-.brand-sub{font-size:10px;color:var(--text3);font-family:'JetBrains Mono',monospace;}
+.brand-name{font-size:14px;font-weight:700;color:#ffffff;}
+.brand-sub{font-size:10px;color:rgba(255,255,255,0.45);font-family:'JetBrains Mono',monospace;}
 .topbar-stats{display:flex;gap:6px;align-items:center;}
 .tstat{text-align:center;padding:6px 12px;background:var(--bg3);border-radius:var(--r);border:1px solid var(--border);}
 .tstat-label{font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;}
@@ -28,16 +28,17 @@ body{background:var(--bg);color:var(--text);font-family:'Space Grotesk',sans-ser
 .laci-edit-btn{font-size:10px;color:var(--text3);cursor:pointer;margin-top:2px;display:block;}
 .laci-edit-btn:hover{color:var(--accent2);}
 /* NAV */
-.nav-tabs{display:flex;gap:0;background:var(--bg2);border-bottom:1px solid var(--border);flex-shrink:0;padding:0 14px;}
-.nav-tab{padding:9px 15px;font-size:12px;font-weight:600;cursor:pointer;color:var(--text3);border-bottom:2px solid transparent;transition:all .15s;display:flex;align-items:center;gap:5px;user-select:none;}
-.nav-tab:hover{color:var(--text2);}
-.nav-tab.active{color:var(--accent2);border-bottom-color:var(--accent);}
+.nav-tabs{display:flex;gap:0;background:var(--bg2);border-bottom:1px solid var(--border);flex-shrink:0;padding:0 14px;overflow-x:auto;}
+.nav-tabs::-webkit-scrollbar{height:0;}
+.nav-tab{padding:11px 16px;font-size:13px;font-weight:700;cursor:pointer;color:rgba(255,255,255,0.42);border-bottom:2px solid transparent;transition:all .15s;display:flex;align-items:center;gap:6px;user-select:none;white-space:nowrap;flex-shrink:0;letter-spacing:.01em;}
+.nav-tab:hover{color:rgba(255,255,255,0.78);}
+.nav-tab.active{color:#ffffff;border-bottom-color:var(--accent);}
 /* VIEWS */
-.view{display:none;flex:1;overflow:hidden;}
+.view{display:none;flex:1;overflow:hidden;min-height:0;}
 .view.active{display:flex;}
 /* KASIR */
-.kasir-view{flex:1;}
-.product-panel{flex:1;display:flex;flex-direction:column;overflow:hidden;border-right:1px solid var(--border);min-width:0;}
+.kasir-view{flex:1;overflow:hidden;min-height:0;}
+.product-panel{flex:1;display:flex;flex-direction:column;overflow:hidden;border-right:1px solid var(--border);min-width:0;min-height:0;}
 .search-bar{padding:11px 13px;background:var(--bg2);border-bottom:1px solid var(--border);flex-shrink:0;}
 .search-wrap{position:relative;}
 .search-wrap input{width:100%;background:var(--bg3);border:1px solid var(--border2);border-radius:var(--r);padding:8px 12px 8px 32px;color:var(--text);font-family:'Space Grotesk',sans-serif;font-size:12px;outline:none;transition:border-color .15s;}
@@ -64,13 +65,13 @@ body{background:var(--bg);color:var(--text);font-family:'Space Grotesk',sans-ser
 .prod-app{font-size:10px;color:var(--text3);margin-top:2px;}
 .no-products{grid-column:1/-1;text-align:center;padding:40px;color:var(--text3);}
 /* CART */
-.cart-panel{width:320px;flex-shrink:0;display:flex;flex-direction:column;background:var(--bg2);overflow:hidden;}
-.cart-header{padding:11px 13px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-shrink:0;}
+.cart-panel{width:300px;flex-shrink:0;display:flex;flex-direction:column;background:var(--bg2);overflow:hidden;min-height:0;}
+.cart-header{padding:9px 12px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-shrink:0;}
 .cart-title{font-size:13px;font-weight:700;}
 .cart-count{background:var(--accent);color:#fff;font-size:10px;font-weight:700;padding:2px 7px;border-radius:20px;font-family:'JetBrains Mono',monospace;}
 .cart-clear{font-size:11px;color:var(--text3);cursor:pointer;padding:3px 7px;border-radius:5px;transition:all .15s;}
 .cart-clear:hover{background:var(--bg4);color:var(--red);}
-.cart-items{flex:1;overflow-y:auto;padding:7px;}
+.cart-items{flex:1;overflow-y:auto;padding:7px;min-height:0;}
 .cart-items::-webkit-scrollbar{width:3px;}
 .cart-items::-webkit-scrollbar-thumb{background:var(--border2);}
 .cart-empty{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;color:var(--text3);font-size:12px;gap:8px;}
@@ -101,36 +102,36 @@ body{background:var(--bg);color:var(--text);font-family:'Space Grotesk',sans-ser
 .qty-val{font-size:12px;font-weight:700;font-family:'JetBrains Mono',monospace;min-width:18px;text-align:center;}
 .ci-del{width:18px;height:18px;background:transparent;border:none;color:var(--text3);cursor:pointer;font-size:12px;padding:0;transition:color .1s;}
 .ci-del:hover{color:var(--red);}
-.note-row{padding:7px 11px;border-top:1px solid var(--border);flex-shrink:0;}
-.note-row input{width:100%;background:var(--bg3);border:1px solid var(--border);border-radius:var(--r);padding:6px 10px;font-size:11px;color:var(--text);font-family:'Space Grotesk',sans-serif;outline:none;}
+.note-row{padding:5px 10px;border-top:1px solid var(--border);flex-shrink:0;}
+.note-row input{width:100%;background:var(--bg3);border:1px solid var(--border);border-radius:var(--r);padding:5px 9px;font-size:11px;color:var(--text);font-family:'Space Grotesk',sans-serif;outline:none;}
 .note-row input:focus{border-color:var(--accent);}
-.cart-summary{border-top:1px solid var(--border);padding:9px 11px;flex-shrink:0;}
-.summary-row{display:flex;justify-content:space-between;align-items:center;padding:2px 0;font-size:12px;}
+.cart-summary{border-top:1px solid var(--border);padding:6px 10px;flex-shrink:0;}
+.summary-row{display:flex;justify-content:space-between;align-items:center;padding:2px 0;font-size:11px;}
 .summary-row .label{color:var(--text2);}
 .summary-row .val{font-family:'JetBrains Mono',monospace;font-weight:600;}
 .summary-row.laba .val{color:var(--green);}
-.summary-row.total{margin-top:6px;padding-top:8px;border-top:1px solid var(--border2);font-size:13px;}
+.summary-row.total{margin-top:5px;padding-top:6px;border-top:1px solid var(--border2);font-size:12px;}
 .summary-row.total .label{color:var(--text);font-weight:700;}
-.summary-row.total .val{color:#fff;font-size:14px;font-weight:700;}
-.payment-section{border-top:1px solid var(--border);padding:10px 11px;flex-shrink:0;}
-.payment-label{font-size:10px;color:var(--text3);margin-bottom:7px;text-transform:uppercase;letter-spacing:.5px;}
-.pay-methods{display:grid;grid-template-columns:repeat(3,1fr);gap:5px;margin-bottom:8px;}
-.pay-btn{padding:7px 4px;background:var(--bg3);border:1px solid var(--border);border-radius:var(--r);color:var(--text2);font-size:11px;font-weight:600;cursor:pointer;text-align:center;transition:all .15s;font-family:'Space Grotesk',sans-serif;}
+.summary-row.total .val{color:#fff;font-size:13px;font-weight:700;}
+.payment-section{border-top:1px solid var(--border);padding:8px 10px;flex-shrink:0;}
+.payment-label{font-size:10px;color:var(--text3);margin-bottom:5px;text-transform:uppercase;letter-spacing:.5px;}
+.pay-methods{display:grid;grid-template-columns:repeat(3,1fr);gap:4px;margin-bottom:6px;}
+.pay-btn{padding:6px 4px;background:var(--bg3);border:1px solid var(--border);border-radius:var(--r);color:var(--text2);font-size:11px;font-weight:600;cursor:pointer;text-align:center;transition:all .15s;font-family:'Space Grotesk',sans-serif;}
 .pay-btn:hover,.pay-btn.active{border-color:var(--accent);color:var(--accent2);background:var(--bg4);}
 .pay-btn.active{background:rgba(108,99,255,.1);}
-.bayar-row{display:flex;gap:7px;align-items:center;margin-bottom:6px;}
-.bayar-row label{font-size:11px;color:var(--text3);white-space:nowrap;}
-.bayar-input{flex:1;background:var(--bg3);border:1px solid var(--border2);border-radius:var(--r);padding:7px 10px;color:var(--text);font-family:'JetBrains Mono',monospace;font-size:12px;outline:none;}
+.bayar-row{display:flex;gap:6px;align-items:center;margin-bottom:5px;}
+.bayar-row label{font-size:10px;color:var(--text3);white-space:nowrap;}
+.bayar-input{flex:1;background:var(--bg3);border:1px solid var(--border2);border-radius:var(--r);padding:6px 9px;color:var(--text);font-family:'JetBrains Mono',monospace;font-size:11px;outline:none;}
 .bayar-input:focus{border-color:var(--green);}
 .bayar-input::placeholder{font-size:10px;color:var(--text3);}
-.quick-amounts{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:6px;}
-.qa-btn{padding:3px 8px;background:var(--bg3);border:1px solid var(--border);border-radius:var(--r);font-size:10px;color:var(--text2);cursor:pointer;font-family:'JetBrains Mono',monospace;transition:all .1s;}
+.quick-amounts{display:flex;gap:3px;flex-wrap:wrap;margin-bottom:5px;}
+.qa-btn{padding:2px 7px;background:var(--bg3);border:1px solid var(--border);border-radius:var(--r);font-size:10px;color:var(--text2);cursor:pointer;font-family:'JetBrains Mono',monospace;transition:all .1s;}
 .qa-btn:hover{background:var(--bg4);color:var(--text);}
-.kembalian-row{display:flex;justify-content:space-between;padding:6px 10px;background:var(--bg3);border-radius:var(--r);margin-bottom:8px;border:1px solid var(--border);}
+.kembalian-row{display:flex;justify-content:space-between;padding:5px 9px;background:var(--bg3);border-radius:var(--r);margin-bottom:6px;border:1px solid var(--border);}
 .kembalian-row .k-label{font-size:11px;color:var(--text2);}
-.kembalian-row .k-val{font-size:13px;font-weight:700;font-family:'JetBrains Mono',monospace;color:var(--green);}
+.kembalian-row .k-val{font-size:12px;font-weight:700;font-family:'JetBrains Mono',monospace;color:var(--green);}
 .kembalian-row .k-val.minus{color:var(--red);}
-.btn-proses{width:100%;padding:11px;background:linear-gradient(135deg,var(--accent),#8b5cf6);border:none;border-radius:var(--r);color:#fff;font-size:13px;font-weight:700;cursor:pointer;font-family:'Space Grotesk',sans-serif;transition:all .15s;display:flex;align-items:center;justify-content:center;gap:6px;}
+.btn-proses{width:100%;padding:10px;background:linear-gradient(135deg,var(--accent),#8b5cf6);border:none;border-radius:var(--r);color:#fff;font-size:13px;font-weight:700;cursor:pointer;font-family:'Space Grotesk',sans-serif;transition:all .15s;display:flex;align-items:center;justify-content:center;gap:6px;}
 .btn-proses:hover{transform:translateY(-1px);box-shadow:0 4px 16px rgba(108,99,255,.35);}
 .btn-proses:active{transform:scale(.98);}
 .btn-proses:disabled{opacity:.4;cursor:not-allowed;transform:none;}
@@ -319,19 +320,21 @@ body{background:var(--bg);color:var(--text);font-family:'Space Grotesk',sans-ser
 .pftab:hover{border-color:var(--accent);color:var(--accent2);}
 .pftab.active{background:var(--accent);border-color:var(--accent);color:#fff;}
 /* TRANSAKSI MANUAL view */
-.manual-view{flex:1;overflow-y:auto;flex-direction:column;gap:14px;padding:16px;}
+.manual-view{flex:1;overflow-y:auto;flex-direction:row;gap:0;padding:0;}
 .manual-view::-webkit-scrollbar{width:4px;}
 .manual-view::-webkit-scrollbar-thumb{background:var(--border2);}
-.manual-item-row{display:grid;grid-template-columns:1fr 80px 80px 80px 30px;gap:6px;align-items:center;background:var(--bg3);border:1px solid var(--border);border-radius:var(--r);padding:7px 10px;}
-.manual-item-row input{background:var(--bg4);border:1px solid var(--border2);border-radius:6px;padding:5px 7px;color:var(--text);font-family:'Space Grotesk',sans-serif;font-size:11px;outline:none;width:100%;}
-.manual-item-row input[type=number]{font-family:'JetBrains Mono',monospace;color:var(--accent2);}
+.manual-left{flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:14px;border-right:1px solid var(--border);}
+.manual-right{width:280px;flex-shrink:0;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:12px;}
+.manual-item-row{display:grid;grid-template-columns:1fr 68px 62px 44px 26px;gap:4px;align-items:center;background:var(--bg3);border:1px solid var(--border);border-radius:var(--r);padding:6px 8px;}
+.manual-item-row input{background:var(--bg4);border:1px solid var(--border2);border-radius:6px;padding:4px 5px;color:var(--text);font-family:'Space Grotesk',sans-serif;font-size:11px;outline:none;width:100%;}
+.manual-item-row input[type=number]{font-family:'JetBrains Mono',monospace;color:var(--accent2);text-align:right;padding:4px 4px;}
 .manual-item-row input:focus{border-color:var(--accent);}
 .manual-col-hdr{font-size:9px;color:var(--text3);font-weight:600;text-transform:uppercase;letter-spacing:.3px;text-align:center;}
-.btn-add-manual-item{padding:7px 14px;background:var(--bg3);border:1px solid var(--border2);border-radius:var(--r);color:var(--text2);font-size:11px;font-weight:600;cursor:pointer;transition:all .15s;}
+.btn-add-manual-item{padding:7px 14px;background:var(--bg3);border:1px solid var(--border2);border-radius:var(--r);color:var(--text2);font-size:11px;font-weight:600;cursor:pointer;transition:all .15s;align-self:flex-start;}
 .btn-add-manual-item:hover{border-color:var(--accent);color:var(--accent2);}
-.btn-del-manual{background:transparent;border:none;color:var(--text3);cursor:pointer;font-size:15px;padding:2px;transition:color .1s;width:100%;}
+.btn-del-manual{background:transparent;border:none;color:var(--text3);cursor:pointer;font-size:13px;padding:2px;transition:color .1s;width:100%;display:flex;align-items:center;justify-content:center;}
 .btn-del-manual:hover{color:var(--red);}
-.manual-summary-row{display:flex;justify-content:space-between;align-items:center;padding:4px 0;font-size:12px;}
+.manual-summary-row{display:flex;justify-content:space-between;align-items:center;padding:3px 0;font-size:12px;}
 .manual-summary-row .label{color:var(--text2);}
 .manual-summary-row .val{font-family:'JetBrains Mono',monospace;font-weight:600;}
 /* SERVICE HARGA MANUAL */
@@ -345,6 +348,22 @@ body{background:var(--bg);color:var(--text);font-family:'Space Grotesk',sans-ser
 .form-mini-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:9px;}
 .form-mini-row .fg.full{grid-column:1/-1;}
 @media(max-width:700px){.form-mini-row{grid-template-columns:1fr 1fr;}}
+/* JAM BUKA TUTUP TOKO */
+.store-status-pill{display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:20px;font-size:10px;font-weight:700;cursor:pointer;transition:all .2s;border:1px solid;user-select:none;}
+.store-status-pill.open{background:rgba(34,197,94,.12);color:var(--green);border-color:rgba(34,197,94,.3);}
+.store-status-pill.closed{background:rgba(239,68,68,.12);color:var(--red);border-color:rgba(239,68,68,.3);}
+.store-status-pill.upcoming{background:rgba(245,158,11,.12);color:var(--amber);border-color:rgba(245,158,11,.3);}
+.store-dot{width:6px;height:6px;border-radius:50%;background:currentColor;display:inline-block;}
+.store-dot.pulse{animation:pulse 1.2s infinite;}
+.jam-modal-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0;}
+.jam-fg{display:flex;flex-direction:column;gap:4px;}
+.jam-fg label{font-size:10px;color:var(--text3);font-weight:600;text-transform:uppercase;letter-spacing:.4px;}
+.jam-input{background:var(--bg3);border:1px solid var(--border2);border-radius:var(--r);padding:8px 10px;color:var(--text);font-family:'JetBrains Mono',monospace;font-size:13px;outline:none;width:100%;}
+.jam-input:focus{border-color:var(--accent);}
+.jam-hari-row{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0;}
+.jam-hari-chip{padding:4px 10px;border-radius:20px;font-size:11px;font-weight:600;cursor:pointer;border:1px solid var(--border2);background:transparent;color:var(--text2);transition:all .15s;}
+.jam-hari-chip.active{background:var(--accent);border-color:var(--accent);color:#fff;}
+.jam-hari-chip:hover{border-color:var(--accent);color:var(--accent2);}
 </style>
 </head>
 <body>
@@ -368,6 +387,10 @@ body{background:var(--bg);color:var(--text);font-family:'Space Grotesk',sans-ser
     </div>
   </div>
   <div style="display:flex;align-items:center;gap:8px;">
+    <span id="store-status-btn" class="store-status-pill closed" onclick="openJamToko()" title="Atur jam buka/tutup toko">
+      <span class="store-dot" id="store-dot"></span>
+      <span id="store-status-label">Tutup</span>
+    </span>
     <span id="sync-status" class="sync-pill syncing"><span class="sync-dot pulse"></span><span id="sync-label">Menghubungkan...</span></span>
     <span id="db-status" title="Status database lokal" style="font-size:10px;padding:3px 8px;border-radius:20px;background:rgba(34,197,94,.12);color:var(--green);border:1px solid rgba(34,197,94,.25);font-weight:600;">⚡ DB OK</span>
     <div class="datetime" id="clock">—</div>
@@ -481,51 +504,60 @@ body{background:var(--bg);color:var(--text);font-family:'Space Grotesk',sans-ser
 
 <!-- TRANSAKSI MANUAL -->
 <div class="view manual-view" id="view-manual">
-  <div class="form-section">
-    <div class="form-title">✍️ Transaksi Manual</div>
-    <p style="font-size:11px;color:var(--text3);margin-bottom:12px;">Input transaksi dengan harga jual & modal bebas. Data akan tersinkron dengan uang laci dan laporan.</p>
-    <!-- Header kolom -->
-    <div style="display:grid;grid-template-columns:1fr 80px 80px 80px 30px;gap:6px;padding:0 10px;margin-bottom:4px;">
-      <div class="manual-col-hdr" style="text-align:left">Nama Item</div>
-      <div class="manual-col-hdr">Harga Jual</div>
-      <div class="manual-col-hdr">Modal</div>
-      <div class="manual-col-hdr">Qty</div>
-      <div class="manual-col-hdr"></div>
+  <!-- Kiri: input item -->
+  <div class="manual-left">
+    <div class="form-section" style="flex-shrink:0">
+      <div class="form-title">✍️ Item Transaksi</div>
+      <!-- Header kolom -->
+      <div style="display:grid;grid-template-columns:1fr 68px 62px 44px 26px;gap:4px;padding:0 8px;margin-bottom:4px;">
+        <div class="manual-col-hdr" style="text-align:left">Nama Item</div>
+        <div class="manual-col-hdr">Jual</div>
+        <div class="manual-col-hdr">Modal</div>
+        <div class="manual-col-hdr">Qty</div>
+        <div class="manual-col-hdr"></div>
+      </div>
+      <div id="manual-items-wrap" style="display:flex;flex-direction:column;gap:5px;margin-bottom:10px;"></div>
+      <button class="btn-add-manual-item" onclick="addManualItem()">➕ Tambah Item</button>
     </div>
-    <div id="manual-items-wrap" style="display:flex;flex-direction:column;gap:6px;margin-bottom:10px;"></div>
-    <button class="btn-add-manual-item" onclick="addManualItem()">➕ Tambah Item</button>
   </div>
-  <div class="form-section">
-    <div class="form-title">💰 Ringkasan & Pembayaran</div>
-    <div style="margin-bottom:10px;">
-      <div class="manual-summary-row"><span class="label">Total Harga Jual</span><span class="val accent" id="manual-sum-jual">Rp 0</span></div>
-      <div class="manual-summary-row"><span class="label">Total Modal</span><span class="val" style="color:var(--red)" id="manual-sum-modal">Rp 0</span></div>
-      <div class="manual-summary-row laba"><span class="label">Estimasi Laba</span><span class="val" style="color:var(--green)" id="manual-sum-laba">Rp 0</span></div>
-      <div class="manual-summary-row total" style="border-top:1px solid var(--border2);padding-top:8px;margin-top:6px;font-size:13px;"><span class="label" style="font-weight:700">TOTAL BAYAR</span><span class="val" style="color:#fff;font-size:14px" id="manual-sum-total">Rp 0</span></div>
+  <!-- Kanan: ringkasan & pembayaran -->
+  <div class="manual-right">
+    <div class="form-section" style="flex-shrink:0">
+      <div class="form-title">💰 Ringkasan</div>
+      <div style="margin-bottom:10px;">
+        <div class="manual-summary-row"><span class="label">Total Harga Jual</span><span class="val" style="color:var(--accent2)" id="manual-sum-jual">Rp 0</span></div>
+        <div class="manual-summary-row"><span class="label">Total Modal</span><span class="val" style="color:var(--red)" id="manual-sum-modal">Rp 0</span></div>
+        <div class="manual-summary-row"><span class="label">Estimasi Laba</span><span class="val" style="color:var(--green)" id="manual-sum-laba">Rp 0</span></div>
+        <div class="manual-summary-row" style="border-top:1px solid var(--border2);padding-top:7px;margin-top:6px;">
+          <span class="label" style="font-weight:700;color:var(--text);font-size:13px">TOTAL BAYAR</span>
+          <span style="font-family:'JetBrains Mono',monospace;font-weight:700;color:#fff;font-size:14px" id="manual-sum-total">Rp 0</span>
+        </div>
+      </div>
     </div>
-    <div class="form-grid" style="grid-template-columns:1fr 1fr;gap:9px;">
-      <div class="fg">
-        <label>Metode Pembayaran</label>
+    <div class="form-section" style="flex-shrink:0">
+      <div class="form-title">💳 Pembayaran</div>
+      <div class="fg" style="margin-bottom:8px">
+        <label>Metode</label>
         <select id="manual-method" onchange="updateManualSummary()">
           <option>Tunai</option><option>Transfer</option><option>QRIS</option>
         </select>
       </div>
-      <div class="fg" id="manual-bayar-wrap">
+      <div class="fg" id="manual-bayar-wrap" style="margin-bottom:8px">
         <label>Uang Diterima (Rp)</label>
-        <input type="number" id="manual-bayar" placeholder="Kosongkan = tanpa kembalian" oninput="updateManualSummary()">
+        <input type="number" id="manual-bayar" placeholder="Kosongkan = pas" oninput="updateManualSummary()">
       </div>
-      <div class="fg full" id="manual-kembalian-wrap" style="display:none">
+      <div id="manual-kembalian-wrap" style="display:none;margin-bottom:8px">
         <div style="display:flex;justify-content:space-between;padding:6px 10px;background:var(--bg3);border-radius:var(--r);border:1px solid var(--border);">
           <span style="font-size:11px;color:var(--text2)">Kembalian</span>
           <span style="font-size:13px;font-weight:700;font-family:'JetBrains Mono',monospace;color:var(--green)" id="manual-kembalian-val">—</span>
         </div>
       </div>
-      <div class="fg full">
+      <div class="fg" style="margin-bottom:10px">
         <label>Catatan</label>
-        <input type="text" id="manual-catatan" placeholder="Keterangan transaksi (opsional)">
+        <input type="text" id="manual-catatan" placeholder="Keterangan (opsional)">
       </div>
+      <button class="btn-proses" onclick="prosesTransaksiManual()">✅ Proses</button>
     </div>
-    <button class="btn-proses" style="margin-top:12px" onclick="prosesTransaksiManual()">✅ Proses Transaksi Manual</button>
   </div>
 </div>
 
@@ -1490,6 +1522,120 @@ function insertCatatan(before,after,placeholder){
 }
 
 // =============================================
+// JAM BUKA / TUTUP TOKO
+// =============================================
+const HARI_NAMES = ['Min','Sen','Sel','Rab','Kam','Jum','Sab'];
+let jamToko = {
+  jamBuka: '08:00',
+  jamTutup: '21:00',
+  hariAktif: [1,2,3,4,5,6], // Sen-Sab default
+};
+
+function loadJamToko(){
+  try{
+    const d = JSON.parse(localStorage.getItem('konterHP_jamToko')||'null');
+    if(d) jamToko = {...jamToko,...d};
+  }catch(e){}
+  updateStoreStatus();
+}
+
+function saveJamToko(){
+  localStorage.setItem('konterHP_jamToko', JSON.stringify(jamToko));
+  updateStoreStatus();
+}
+
+function updateStoreStatus(){
+  const btn = document.getElementById('store-status-btn');
+  const label = document.getElementById('store-status-label');
+  const dot = document.getElementById('store-dot');
+  if(!btn) return;
+  const now = new Date();
+  const hari = now.getDay();
+  const hhmm = now.getHours()*60 + now.getMinutes();
+  const [bH,bM] = jamToko.jamBuka.split(':').map(Number);
+  const [tH,tM] = jamToko.jamTutup.split(':').map(Number);
+  const bukaMnt = bH*60+bM, tutupMnt = tH*60+tM;
+  const isHariAktif = jamToko.hariAktif.includes(hari);
+  const isBuka = isHariAktif && hhmm >= bukaMnt && hhmm < tutupMnt;
+  const isUpcoming = isHariAktif && hhmm < bukaMnt && (bukaMnt - hhmm) <= 60;
+
+  if(isBuka){
+    btn.className = 'store-status-pill open';
+    label.textContent = '🟢 Buka · Tutup '+jamToko.jamTutup;
+    dot.className = 'store-dot pulse';
+  } else if(isUpcoming){
+    btn.className = 'store-status-pill upcoming';
+    label.textContent = '⏳ Buka '+jamToko.jamBuka;
+    dot.className = 'store-dot';
+  } else {
+    btn.className = 'store-status-pill closed';
+    label.textContent = '🔴 Tutup · Buka '+jamToko.jamBuka;
+    dot.className = 'store-dot';
+  }
+}
+setInterval(updateStoreStatus, 30000);
+
+function openJamToko(){
+  const hariChips = HARI_NAMES.map((h,i)=>
+    `<span class="jam-hari-chip ${jamToko.hariAktif.includes(i)?'active':''}" onclick="toggleHariToko(this,${i})">${h}</span>`
+  ).join('');
+  openModal(`
+    <div class="edit-modal-title">🏪 Jam Operasional Toko</div>
+    <div class="jam-modal-grid">
+      <div class="jam-fg">
+        <label>🟢 Jam Buka</label>
+        <input type="time" class="jam-input" id="jam-buka-input" value="${jamToko.jamBuka}">
+      </div>
+      <div class="jam-fg">
+        <label>🔴 Jam Tutup</label>
+        <input type="time" class="jam-input" id="jam-tutup-input" value="${jamToko.jamTutup}">
+      </div>
+    </div>
+    <div style="margin-bottom:8px">
+      <div style="font-size:10px;color:var(--text3);font-weight:600;text-transform:uppercase;letter-spacing:.4px;margin-bottom:8px">Hari Aktif</div>
+      <div class="jam-hari-row" id="jam-hari-row">${hariChips}</div>
+    </div>
+    <div id="jam-preview" style="padding:8px 12px;background:var(--bg3);border-radius:var(--r);font-size:11px;color:var(--text2);margin-bottom:12px;"></div>
+    <div class="edit-actions">
+      <button class="btn-cancel-edit" onclick="closeModal()">Batal</button>
+      <button class="btn-save-edit" onclick="simpanJamToko()">💾 Simpan</button>
+    </div>`);
+  updateJamPreview();
+}
+
+function toggleHariToko(el, idx){
+  el.classList.toggle('active');
+  if(el.classList.contains('active')){
+    if(!jamToko.hariAktif.includes(idx)) jamToko.hariAktif.push(idx);
+  } else {
+    jamToko.hariAktif = jamToko.hariAktif.filter(h=>h!==idx);
+  }
+  jamToko.hariAktif.sort();
+  updateJamPreview();
+}
+
+function updateJamPreview(){
+  const buka = document.getElementById('jam-buka-input')?.value || jamToko.jamBuka;
+  const tutup = document.getElementById('jam-tutup-input')?.value || jamToko.jamTutup;
+  const hariLabel = jamToko.hariAktif.length===7?'Setiap hari':
+    jamToko.hariAktif.length===0?'Tidak ada hari aktif':
+    jamToko.hariAktif.map(h=>HARI_NAMES[h]).join(', ');
+  const prev = document.getElementById('jam-preview');
+  if(prev) prev.textContent = `📅 ${hariLabel} · ⏰ ${buka} – ${tutup}`;
+}
+
+function simpanJamToko(){
+  const buka = document.getElementById('jam-buka-input').value;
+  const tutup = document.getElementById('jam-tutup-input').value;
+  if(!buka||!tutup){showToast('⚠️ Jam tidak boleh kosong!','error');return;}
+  jamToko.jamBuka = buka;
+  jamToko.jamTutup = tutup;
+  saveJamToko();
+  closeModal();
+  showToast('✓ Jam toko disimpan','success');
+}
+
+// =============================================
 // FIREBASE CONFIG & INIT
 // =============================================
 const firebaseConfig = {
@@ -2336,6 +2482,7 @@ async function prosesTransaksiManual(){
   }
   loadCustomKategori();
   loadLaciStats();
+  loadJamToko();
   renderFilterTabs();renderProducts();updateSummary();renderProdukList();updateTopStats();
   // Init Firebase realtime sync
   initFirebase();
