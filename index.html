@@ -137,9 +137,17 @@ body{background:var(--bg);color:var(--text);font-family:'Space Grotesk',sans-ser
 .btn-proses:active{transform:scale(.98);}
 .btn-proses:disabled{opacity:.4;cursor:not-allowed;transform:none;}
 /* REKAP */
-.rekap-view{flex:1;overflow-y:auto;flex-direction:column;gap:16px;padding:16px;}
-.rekap-view::-webkit-scrollbar{width:4px;}
-.rekap-view::-webkit-scrollbar-thumb{background:var(--border2);}
+.rekap-view{flex:1;overflow:hidden;flex-direction:column;gap:0;padding:0;}
+/* Top section: stats + kategori — fixed height, scrollable internally */
+.rekap-view-top{flex-shrink:0;display:flex;flex-direction:column;gap:10px;padding:12px 12px 0;overflow-y:auto;max-height:44%;}
+.rekap-view-top::-webkit-scrollbar{width:3px;}
+.rekap-view-top::-webkit-scrollbar-thumb{background:var(--border2);}
+/* Bottom section: tabel transaksi — takes remaining space, fully scrollable */
+.rekap-view-table-wrap{flex:1;display:flex;flex-direction:column;padding:10px 12px 12px;min-height:0;overflow:hidden;}
+.rekap-view-table-wrap .rsec{flex:1;display:flex;flex-direction:column;overflow:hidden;}
+.rekap-table-scroll{flex:1;overflow-y:auto;}
+.rekap-table-scroll::-webkit-scrollbar{width:4px;}
+.rekap-table-scroll::-webkit-scrollbar-thumb{background:var(--border2);}
 .rsec{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r2);overflow:hidden;}
 .rsec-head{padding:12px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
 .rsec-title{font-size:13px;font-weight:700;}
@@ -298,6 +306,10 @@ body{background:var(--bg);color:var(--text);font-family:'Space Grotesk',sans-ser
 .kerusakan-chip{padding:3px 9px;background:var(--bg4);border:1px solid var(--border2);border-radius:20px;font-size:10px;color:var(--text3);cursor:pointer;transition:all .1s;user-select:none;}
 .kerusakan-chip:hover{background:rgba(239,68,68,.12);border-color:var(--red);color:#fca5a5;}
 .kerusakan-chip.active{background:rgba(239,68,68,.2);border-color:var(--red);color:#fca5a5;}
+/* Rekap Bulanan search bar */
+.rekap-bulanan-search-row{padding:9px 14px;border-bottom:1px solid var(--border);display:flex;gap:8px;align-items:center;flex-wrap:wrap;flex-shrink:0;}
+.rekap-bulanan-search-row input,.rekap-bulanan-search-row select{background:var(--bg3);border:1px solid var(--border2);border-radius:var(--r);padding:7px 10px;color:var(--text);font-family:'Space Grotesk',sans-serif;font-size:12px;outline:none;}
+.rekap-bulanan-search-row input:focus,.rekap-bulanan-search-row select:focus{border-color:var(--accent);}
 .backup-btn{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;padding:16px 12px;background:var(--bg3);border:1px solid var(--border2);border-radius:var(--r2);cursor:pointer;transition:all .15s;font-family:'Space Grotesk',sans-serif;color:var(--text);text-align:center;}
 .backup-btn:hover{border-color:var(--accent);background:var(--bg4);}
 .backup-btn-restore{padding:12px 16px;background:var(--green2);border:none;border-radius:var(--r);color:#fff;font-size:12px;font-weight:700;cursor:pointer;font-family:'Space Grotesk',sans-serif;white-space:nowrap;transition:all .15s;}
@@ -441,8 +453,12 @@ body{background:var(--bg);color:var(--text);font-family:'Space Grotesk',sans-ser
           <input type="text" id="srv-nama" placeholder="cth: Budi Santoso">
         </div>
         <div class="service-fg">
-          <label>Nomor HP</label>
+          <label>Nomor HP Pelanggan</label>
           <input type="tel" id="srv-hp" placeholder="cth: 08123456789">
+        </div>
+        <div class="service-fg full">
+          <label>Tipe / Merek HP</label>
+          <input type="text" id="srv-tipe" placeholder="cth: Samsung A35, iPhone 13, Redmi Note 12...">
         </div>
         <div class="service-fg full">
           <label>Jenis Kerusakan</label>
@@ -566,74 +582,109 @@ body{background:var(--bg);color:var(--text);font-family:'Space Grotesk',sans-ser
 
 <!-- REKAP -->
 <div class="view rekap-view" id="view-rekap">
-  <div class="rsec">
-    <div class="rsec-head"><span class="rsec-title">📈 Ringkasan Hari Ini</span></div>
-    <div class="stat-cards" id="rekap-stats"></div>
-  </div>
-  <div class="rsec">
-    <div class="rsec-head"><span class="rsec-title">🏷️ Laba per Kategori</span></div>
-    <div class="rekap-by-kat" id="rekap-by-kat"></div>
-  </div>
-  <div class="rsec">
-    <div class="rsec-head">
-      <span class="rsec-title">🧾 Semua Transaksi</span>
-      <span id="rekap-trx-count" style="font-size:11px;color:var(--text3)">0 transaksi</span>
+  <!-- Top: stats & kategori — scrollable kalau konten banyak -->
+  <div class="rekap-view-top">
+    <div class="rsec">
+      <div class="rsec-head"><span class="rsec-title">📈 Ringkasan Hari Ini</span></div>
+      <div class="stat-cards" id="rekap-stats"></div>
     </div>
-    <div style="padding:9px 14px;border-bottom:1px solid var(--border);display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
-      <div style="position:relative;flex:1;min-width:160px;max-width:300px;">
-        <span style="position:absolute;left:9px;top:50%;transform:translateY(-50%);color:var(--text3);font-size:12px;pointer-events:none;">🔍</span>
-        <input type="text" id="rekap-search" placeholder="Cari ID, produk, metode..."
-          oninput="renderRekap()"
-          style="width:100%;background:var(--bg3);border:1px solid var(--border2);border-radius:var(--r);padding:7px 10px 7px 30px;color:var(--text);font-family:'Space Grotesk',sans-serif;font-size:12px;outline:none;"
-          onfocus="this.style.borderColor='var(--accent)'" onblur="this.style.borderColor='var(--border2)'">
+    <div class="rsec">
+      <div class="rsec-head"><span class="rsec-title">🏷️ Laba per Kategori</span></div>
+      <div class="rekap-by-kat" id="rekap-by-kat"></div>
+    </div>
+  </div>
+  <!-- Bottom: tabel transaksi — flex:1, tabel di-scroll sendiri -->
+  <div class="rekap-view-table-wrap">
+    <div class="rsec">
+      <div class="rsec-head" style="flex-shrink:0">
+        <span class="rsec-title">🧾 Semua Transaksi</span>
+        <span id="rekap-trx-count" style="font-size:11px;color:var(--text3)">0 transaksi</span>
       </div>
-      <select id="rekap-filter-method" onchange="renderRekap()" style="background:var(--bg3);border:1px solid var(--border2);border-radius:var(--r);padding:7px 10px;color:var(--text);font-family:'Space Grotesk',sans-serif;font-size:12px;outline:none;">
-        <option value="">Semua Metode</option>
-        <option value="Tunai">💵 Tunai</option>
-        <option value="Transfer">🏦 Transfer</option>
-        <option value="QRIS">📲 QRIS</option>
-      </select>
-      <select id="rekap-filter-tanggal" onchange="renderRekap()" style="background:var(--bg3);border:1px solid var(--border2);border-radius:var(--r);padding:7px 10px;color:var(--text);font-family:'Space Grotesk',sans-serif;font-size:12px;outline:none;">
-        <option value="">Semua Tanggal</option>
-        <option value="today">📅 Hari Ini</option>
-        <option value="week">📆 7 Hari</option>
-      </select>
-      <button onclick="document.getElementById('rekap-search').value='';document.getElementById('rekap-filter-method').value='';document.getElementById('rekap-filter-tanggal').value='';renderRekap();"
-        style="padding:7px 11px;background:var(--bg3);border:1px solid var(--border2);border-radius:var(--r);color:var(--text2);font-size:11px;cursor:pointer;font-family:'Space Grotesk',sans-serif;transition:all .15s;"
-        onmouseover="this.style.borderColor='var(--red)';this.style.color='var(--red)'" onmouseout="this.style.borderColor='var(--border2)';this.style.color='var(--text2)'">✕ Reset</button>
+      <div style="padding:9px 14px;border-bottom:1px solid var(--border);display:flex;gap:8px;align-items:center;flex-wrap:wrap;flex-shrink:0;">
+        <div style="position:relative;flex:1;min-width:160px;max-width:300px;">
+          <span style="position:absolute;left:9px;top:50%;transform:translateY(-50%);color:var(--text3);font-size:12px;pointer-events:none;">🔍</span>
+          <input type="text" id="rekap-search" placeholder="Cari ID, produk, metode..."
+            oninput="renderRekap()"
+            style="width:100%;background:var(--bg3);border:1px solid var(--border2);border-radius:var(--r);padding:7px 10px 7px 30px;color:var(--text);font-family:'Space Grotesk',sans-serif;font-size:12px;outline:none;"
+            onfocus="this.style.borderColor='var(--accent)'" onblur="this.style.borderColor='var(--border2)'">
+        </div>
+        <select id="rekap-filter-method" onchange="renderRekap()" style="background:var(--bg3);border:1px solid var(--border2);border-radius:var(--r);padding:7px 10px;color:var(--text);font-family:'Space Grotesk',sans-serif;font-size:12px;outline:none;">
+          <option value="">Semua Metode</option>
+          <option value="Tunai">💵 Tunai</option>
+          <option value="Transfer">🏦 Transfer</option>
+          <option value="QRIS">📲 QRIS</option>
+        </select>
+        <select id="rekap-filter-tanggal" onchange="renderRekap()" style="background:var(--bg3);border:1px solid var(--border2);border-radius:var(--r);padding:7px 10px;color:var(--text);font-family:'Space Grotesk',sans-serif;font-size:12px;outline:none;">
+          <option value="">Semua Tanggal</option>
+          <option value="today">📅 Hari Ini</option>
+          <option value="week">📆 7 Hari</option>
+        </select>
+        <button onclick="document.getElementById('rekap-search').value='';document.getElementById('rekap-filter-method').value='';document.getElementById('rekap-filter-tanggal').value='';renderRekap();"
+          style="padding:7px 11px;background:var(--bg3);border:1px solid var(--border2);border-radius:var(--r);color:var(--text2);font-size:11px;cursor:pointer;font-family:'Space Grotesk',sans-serif;transition:all .15s;"
+          onmouseover="this.style.borderColor='var(--red)';this.style.color='var(--red)'" onmouseout="this.style.borderColor='var(--border2)';this.style.color='var(--text2)'">✕ Reset</button>
+      </div>
+      <div class="rekap-table-scroll">
+        <table class="rekap-table">
+          <thead><tr><th>ID</th><th>Waktu</th><th>Items</th><th>Total</th><th>Laba</th><th>Metode</th><th>Aksi</th></tr></thead>
+          <tbody id="rekap-tbody"></tbody>
+        </table>
+      </div>
     </div>
-    <table class="rekap-table">
-      <thead><tr><th>ID</th><th>Waktu</th><th>Items</th><th>Total</th><th>Laba</th><th>Metode</th><th>Aksi</th></tr></thead>
-      <tbody id="rekap-tbody"></tbody>
-    </table>
   </div>
 </div>
 
 <!-- REKAP BULANAN -->
 <div class="view rekap-view" id="view-rekapbulanan">
-  <div class="rsec">
-    <div class="rsec-head">
-      <span class="rsec-title">📅 Rekap Bulanan</span>
-      <div class="bulan-filter">
-        <select class="bulan-select" id="bulan-select" onchange="renderRekapBulanan()"></select>
-        <select class="bulan-select" id="tahun-select" onchange="renderRekapBulanan()"></select>
+  <!-- Top: filter bulan + stats + kategori -->
+  <div class="rekap-view-top">
+    <div class="rsec">
+      <div class="rsec-head">
+        <span class="rsec-title">📅 Rekap Bulanan</span>
+        <div class="bulan-filter">
+          <select class="bulan-select" id="bulan-select" onchange="renderRekapBulanan()"></select>
+          <select class="bulan-select" id="tahun-select" onchange="renderRekapBulanan()"></select>
+        </div>
+      </div>
+      <div class="rekap-bulanan-grid" id="rekap-bulanan-stats"></div>
+    </div>
+    <div class="rsec">
+      <div class="rsec-head"><span class="rsec-title">🏷️ Laba per Kategori Bulan Ini</span></div>
+      <div class="rekap-by-kat" id="rekap-bulanan-kat"></div>
+    </div>
+  </div>
+  <!-- Bottom: tabel transaksi bulanan — scrollable -->
+  <div class="rekap-view-table-wrap">
+    <div class="rsec">
+      <div class="rsec-head" style="flex-shrink:0">
+        <span class="rsec-title">🧾 Transaksi Bulan Ini</span>
+        <span id="rekap-bulanan-count" style="font-size:11px;color:var(--text3)">0 transaksi</span>
+      </div>
+      <!-- Search & filter bar -->
+      <div class="rekap-bulanan-search-row">
+        <div style="position:relative;flex:1;min-width:160px;max-width:300px;">
+          <span style="position:absolute;left:9px;top:50%;transform:translateY(-50%);color:var(--text3);font-size:12px;pointer-events:none;">🔍</span>
+          <input type="text" id="rekap-bulanan-search" placeholder="Cari ID, produk, metode..."
+            oninput="renderRekapBulanan()"
+            style="width:100%;padding-left:30px;"
+            onfocus="this.style.borderColor='var(--accent)'" onblur="this.style.borderColor='var(--border2)'">
+        </div>
+        <select id="rekap-bulanan-filter-method" onchange="renderRekapBulanan()">
+          <option value="">Semua Metode</option>
+          <option value="Tunai">💵 Tunai</option>
+          <option value="Transfer">🏦 Transfer</option>
+          <option value="QRIS">📲 QRIS</option>
+        </select>
+        <button onclick="document.getElementById('rekap-bulanan-search').value='';document.getElementById('rekap-bulanan-filter-method').value='';renderRekapBulanan();"
+          style="padding:7px 11px;background:var(--bg3);border:1px solid var(--border2);border-radius:var(--r);color:var(--text2);font-size:11px;cursor:pointer;font-family:'Space Grotesk',sans-serif;transition:all .15s;white-space:nowrap;"
+          onmouseover="this.style.borderColor='var(--red)';this.style.color='var(--red)'" onmouseout="this.style.borderColor='var(--border2)';this.style.color='var(--text2)'">✕ Reset</button>
+      </div>
+      <div class="rekap-table-scroll">
+        <table class="rekap-table">
+          <thead><tr><th>ID</th><th>Tanggal</th><th>Waktu</th><th>Items</th><th>Total</th><th>Laba</th><th>Metode</th></tr></thead>
+          <tbody id="rekap-bulanan-tbody"></tbody>
+        </table>
       </div>
     </div>
-    <div class="rekap-bulanan-grid" id="rekap-bulanan-stats"></div>
-  </div>
-  <div class="rsec">
-    <div class="rsec-head"><span class="rsec-title">🏷️ Laba per Kategori Bulan Ini</span></div>
-    <div class="rekap-by-kat" id="rekap-bulanan-kat"></div>
-  </div>
-  <div class="rsec">
-    <div class="rsec-head">
-      <span class="rsec-title">🧾 Transaksi Bulan Ini</span>
-      <span id="rekap-bulanan-count" style="font-size:11px;color:var(--text3)">0 transaksi</span>
-    </div>
-    <table class="rekap-table">
-      <thead><tr><th>ID</th><th>Tanggal</th><th>Waktu</th><th>Items</th><th>Total</th><th>Laba</th><th>Metode</th></tr></thead>
-      <tbody id="rekap-bulanan-tbody"></tbody>
-    </table>
   </div>
 </div>
 
@@ -999,6 +1050,7 @@ function showStruk(trx){
       <div style="font-weight:700;color:#fca5a5;margin-bottom:4px">🔧 Info Servis</div>
       ${trx.service.nama?`<div style="color:var(--text2)">Pelanggan: <strong style="color:var(--text)">${trx.service.nama}</strong></div>`:''}
       ${trx.service.hp?`<div style="color:var(--text2)">No. HP: <strong style="color:var(--text)">${trx.service.hp}</strong></div>`:''}
+      ${trx.service.tipe?`<div style="color:var(--text2)">Tipe HP: <strong style="color:var(--text)">${trx.service.tipe}</strong></div>`:''}
       ${trx.service.kerusakan?`<div style="color:var(--text2)">Kerusakan: <strong style="color:var(--text)">${trx.service.kerusakan}</strong></div>`:''}
     </div>`:'';
   openModal(`
@@ -1290,7 +1342,7 @@ function toggleKerusakan(el,val){
 }
 
 function clearServicePanel(){
-  const ids=['srv-nama','srv-hp','srv-kerusakan','srv-override-harga','srv-override-modal'];
+  const ids=['srv-nama','srv-hp','srv-tipe','srv-kerusakan','srv-override-harga','srv-override-modal'];
   ids.forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
   document.querySelectorAll('.kerusakan-chip').forEach(c=>c.classList.remove('active'));
 }
@@ -1311,9 +1363,10 @@ function applySrvPriceOverride(){
 function getServiceData(){
   const nama=(document.getElementById('srv-nama')?.value||'').trim();
   const hp=(document.getElementById('srv-hp')?.value||'').trim();
+  const tipe=(document.getElementById('srv-tipe')?.value||'').trim();
   const kerusakan=(document.getElementById('srv-kerusakan')?.value||'').trim();
-  if(!nama&&!hp&&!kerusakan) return null;
-  return{nama,hp,kerusakan};
+  if(!nama&&!hp&&!kerusakan&&!tipe) return null;
+  return{nama,hp,tipe,kerusakan};
 }
 
 // =============================================
@@ -1489,9 +1542,20 @@ function renderRekapBulanan(){
       </div>`).join('')
     :'<div style="padding:14px;color:var(--text3);font-size:12px">Belum ada data bulan ini</div>';
   // Table
-  document.getElementById('rekap-bulanan-count').textContent=trxBulan.length+' transaksi';
-  document.getElementById('rekap-bulanan-tbody').innerHTML=trxBulan.length
-    ?trxBulan.map(t=>`<tr>
+  // Apply search+filter on top of bulan filter
+  const bulQ=(document.getElementById('rekap-bulanan-search')?.value||'').toLowerCase();
+  const bulMethod=document.getElementById('rekap-bulanan-filter-method')?.value||'';
+  let filteredBul=trxBulan.filter(t=>{
+    if(bulMethod&&t.method!==bulMethod) return false;
+    if(bulQ){
+      const hay=(t.id+' '+t.items.map(i=>i.nama).join(' ')+' '+t.method+' '+t.tanggal).toLowerCase();
+      if(!hay.includes(bulQ)) return false;
+    }
+    return true;
+  });
+  document.getElementById('rekap-bulanan-count').textContent=filteredBul.length+' / '+trxBulan.length+' transaksi';
+  document.getElementById('rekap-bulanan-tbody').innerHTML=filteredBul.length
+    ?filteredBul.map(t=>`<tr>
         <td><span class="trx-id">${t.id}</span></td>
         <td style="font-family:'JetBrains Mono',monospace;font-size:11px">${t.tanggal}</td>
         <td style="font-family:'JetBrains Mono',monospace;font-size:11px">${t.waktu}</td>
@@ -1500,7 +1564,7 @@ function renderRekapBulanan(){
         <td><span class="trx-laba">+${fmt(t.laba)}</span></td>
         <td><span class="method-badge m-${t.method}">${t.method}</span></td>
       </tr>`).join('')
-    :'<tr><td colspan="7" style="text-align:center;padding:22px;color:var(--text3)">Belum ada transaksi bulan ini</td></tr>';
+    :'<tr><td colspan="7" style="text-align:center;padding:22px;color:var(--text3)">'+(bulQ||bulMethod?'🔍 Tidak ada hasil pencarian':'Belum ada transaksi bulan ini')+'</td></tr>';
 }
 
 // =============================================
